@@ -58,13 +58,6 @@ def step():
             vertex.vy += GRAVITY
         vertex.x += vertex.vx
         vertex.y += vertex.vy
-        if vertex.y - vertex.mass >= height:
-            vertex.y = height - vertex.mass
-            if math.fabs(vertex.vy) > 1:
-                vertex.vy = -math.fabs(vertex.vy) * 0.2
-            else:
-                vertex.vy = 0
-            vertex.vx *= GROUND_FRICTION
 
     for edge in edges:
         dx = edge.start.x - edge.end.x
@@ -76,6 +69,15 @@ def step():
         edge.start.vy -= fy / edge.start.mass
         edge.end.vx += fx / edge.end.mass
         edge.end.vy += fy / edge.end.mass
+
+    for vertex in vertices:
+        if vertex.y - vertex.mass >= height:
+            vertex.y = height - vertex.mass
+            if math.fabs(vertex.vy) > 1:
+                vertex.vy = -math.fabs(vertex.vy) * 0.2
+            else:
+                vertex.vy = 0
+            vertex.vx *= GROUND_FRICTION
 
 
 def draw(screen):

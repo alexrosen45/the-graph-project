@@ -9,7 +9,7 @@ import math
 BLUE = (0, 0, 255)
 EDGE_CREATION_RADIUS = 100
 
-SPRING_CONSTANT = 0.9
+SPRING_CONSTANT = 0.1
 FRICTION = 0.98
 GROUND_FRICTION = 0.98
 GRAVITY = 0.1
@@ -70,8 +70,8 @@ def step():
         dx = edge.start.x - edge.end.x
         dy = edge.start.y - edge.end.y
         distance = (dx ** 2 + dy ** 2) ** 0.5
-        fx = SPRING_CONSTANT*dx * (1 - edge.initial_distance / distance)
-        fy = SPRING_CONSTANT*dy * (1 - edge.initial_distance / distance)
+        fx = SPRING_CONSTANT * dx * (1 - edge.initial_distance / distance)
+        fy = SPRING_CONSTANT * dy * (1 - edge.initial_distance / distance)
         edge.start.vx -= fx / edge.start.mass
         edge.start.vy -= fy / edge.start.mass
         edge.end.vx += fx / edge.end.mass

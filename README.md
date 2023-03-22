@@ -1,13 +1,13 @@
-![image](https://github.com/alexrosen45/the-graph-project/blob/master/The%20graph%20project%20(2).png)
+![image](https://github.com/alexrosen45/the-graph-project/blob/master/resouorces/logo.png)
 
 
 # The Graph Project
 
 add stuff here
 
-## Install
+## Run
 
-add stuff here
+1. `python3 main.py`
 
 ## Usage
 

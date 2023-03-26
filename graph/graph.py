@@ -27,7 +27,6 @@ class SpringMassGraph:
     DRAG_RADIUS = 10
 
     def __init__(self, spring_constant=0.02, friction=0.02, ground_friction=0.02, gravity=0.01) -> None:
-        """Initialize blank graph"""
         self.vertices = []
         self.edges = []
 
@@ -38,7 +37,6 @@ class SpringMassGraph:
 
     def draw(self, screen) -> None:
         """Draw graph on pygame screen."""
-        # setup
         screen.fill(WHITE)
         mouse = pygame.mouse.get_pos()
 
@@ -54,6 +52,51 @@ class SpringMassGraph:
             pygame.draw.circle(screen, LIGHT_GREEN,
                                mouse, self.EDGE_CREATION_RADIUS)
 
+        self._draw_edges(screen)
+        self._draw_vertices(screen)
+
+        pygame.display.update()
+
+    def add_new_vertex(self, x, y) -> None:
+        """Add to vertex to graph as position (x, y)."""
+        new_vertex = Vertex(x, y)
+
+        # add edges within edge creation radius
+        for v in self.vertices:
+            if (v.x - new_vertex.x) ** 2 + (v.y - new_vertex.y) ** 2 < self.EDGE_CREATION_RADIUS ** 2:
+                new_edge = Edge(v, new_vertex)
+                self.edges.append(new_edge)
+
+        self.vertices.append(new_vertex)
+
+    def remove_last_vertex(self) -> None:
+        """Remove the last vertex added to the graph."""
+        v = self.vertices.pop()
+        self.edges = [
+            e for e in self.edges if e.start != v and e.end != v
+        ]
+
+    def reset(self) -> None:
+        """Remove all vertices and edges from self."""
+        self.vertices = []
+        self.edges = []
+
+    def get_time_change(self, time_elapsed: float) -> float:
+        """Return time change based on time elapsed."""
+        return time_elapsed / 1000 * 60
+
+    def run_substeps(self) -> None:
+        """Run self.step self.SUBSTEPS times."""
+        for _ in range(self.SUBSTEPS):
+            self._step(16)
+
+    def _draw_vertices(self, screen) -> None:
+        """Draw self.vertices on pygame screen."""
+        for v in self.vertices:
+            pygame.draw.circle(screen, BLACK, (v.x, v.y), v.mass)
+
+    def _draw_edges(self, screen) -> None:
+        """Draw self.edges on pygame screen."""
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
@@ -65,12 +108,6 @@ class SpringMassGraph:
                              (edge.start.x, edge.start.y),
                              (edge.end.x, edge.end.y))
 
-        for vertex in self.vertices:
-            pygame.draw.circle(
-                screen, BLACK, (vertex.x, vertex.y), vertex.mass)
-
-        pygame.display.update()
-
     def _step(self, time_elapsed: int) -> None:
         """Execute a physics logic step for the simulation, updating all vertices and edges."""
         # calculate change in time
@@ -80,19 +117,10 @@ class SpringMassGraph:
         self._update_edges(dt)
         self._clamp_vertices()
 
-    def get_time_change(self, time_elapsed) -> float:
-        """Return time change based on time elapsed."""
-        return time_elapsed / 1000 * 60
-
     def _update_vertices(self, dt: float) -> None:
         """Update vertices for simulation step relative to change in time."""
-        for vertex in self.vertices:
-            vertex.vx *= (1 - (self.FRICTION * dt))
-            vertex.vy *= (1 - (self.FRICTION * dt))
-            vertex.vy += self.GRAVITY * dt
-            if not vertex.pinned:
-                vertex.x += (vertex.vx * dt)
-                vertex.y += (vertex.vy * dt)
+        for v in self.vertices:
+            v.update(self.FRICTION, self.GRAVITY, dt)
 
     def _update_edges(self, dt: float) -> None:
         """Update edges for simulation step relative to change in time."""
@@ -103,14 +131,9 @@ class SpringMassGraph:
             dlen = (max(min(distance - edge.initial_distance, 10), -10))
             fx = self.SPRING_CONSTANT * dx * dlen / distance * dt
             fy = self.SPRING_CONSTANT * dy * dlen / distance * dt
-            edge.start.vx -= fx / edge.start.mass
-            edge.start.vy -= fy / edge.start.mass
-            edge.end.vx += fx / edge.end.mass
-            edge.end.vy += fy / edge.end.mass
+            edge.update(fx, fy)
 
     def _clamp_vertices(self) -> None:
         """Clamp vertex coordinates."""
-        for vertex in self.vertices:
-            if not vertex.pinned:
-                vertex.y = min(vertex.y, height)
-                vertex.x = max(min(vertex.x, width), 0)
+        for v in self.vertices:
+            v.clamp(height, width)

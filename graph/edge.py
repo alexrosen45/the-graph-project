@@ -5,7 +5,7 @@ MIN_DISTANCE = 15
 
 
 class Edge:
-    """Massless spring, applies spring forces"""
+    """Massless spring, applies spring forces."""
     initial_distance = 5
     start: Vertex
     end: Vertex
@@ -23,3 +23,10 @@ class Edge:
                 distance - 5, distance + 5) ** 0.5)
         else:
             self.initial_distance = max(MIN_DISTANCE, distance ** 0.5)
+
+    def update(self, fx: float, fy: float):
+        """Update self using fx and fy."""
+        self.start.vx -= fx / self.start.mass
+        self.start.vy -= fy / self.start.mass
+        self.end.vx += fx / self.end.mass
+        self.end.vy += fy / self.end.mass

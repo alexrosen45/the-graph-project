@@ -3,7 +3,6 @@ Main simulation file
 """
 
 import pygame
-import math
 
 from graph.vertex import Vertex
 from graph.edge import Edge
@@ -14,9 +13,13 @@ BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 LIGHT_GREEN = (128, 255, 212)
-EDGE_CREATION_RADIUS = 100
 
-SPRING_CONSTANT = 0.5
+SUBSTEPS = 10
+
+EDGE_CREATION_RADIUS = 100
+DRAG_RADIUS = 10
+
+SPRING_CONSTANT = 0.02
 FRICTION = 0.02
 GROUND_FRICTION = 0.02
 GRAVITY = 0.01
@@ -31,10 +34,10 @@ def step(time_elapsed: int):
     for vertex in vertices:
         vertex.vx *= (1 - (FRICTION * dt))
         vertex.vy *= (1 - (FRICTION * dt))
-        # if vertex.y + 2 * vertex.mass < height:
         vertex.vy += GRAVITY * dt
-        vertex.x += (vertex.vx * dt)
-        vertex.y += (vertex.vy * dt)
+        if not vertex.pinned:
+            vertex.x += (vertex.vx * dt)
+            vertex.y += (vertex.vy * dt)
 
     for edge in edges:
         dx = edge.start.x - edge.end.x
@@ -49,12 +52,9 @@ def step(time_elapsed: int):
         edge.end.vy += fy / edge.end.mass
 
     for vertex in vertices:
-        vertex.y = min(vertex.y, height)
-        # if math.fabs(vertex.vy) > 1:
-        #     vertex.vy = -math.fabs(vertex.vy) * 0.2
-        # else:
-        # vertex.vy = 0
-        # vertex.vx *= (1 - (GROUND_FRICTION * dt))
+        if not vertex.pinned:
+            vertex.y = min(vertex.y, height)
+            vertex.x = max(min(vertex.x, width), 0)
 
 
 def draw(screen):
@@ -65,11 +65,27 @@ def draw(screen):
     screen.fill(WHITE)
 
     mouse = pygame.mouse.get_pos()
-    pygame.draw.circle(screen, LIGHT_GREEN, mouse, EDGE_CREATION_RADIUS)
+
+    is_near_vertex = False
+    for vertex in vertices:
+        if (vertex.x - mouse[0]) ** 2 + (vertex.y - mouse[1]) ** 2 < DRAG_RADIUS ** 2:
+            is_near_vertex = True
+            break
+    if is_near_vertex:
+        pygame.draw.circle(screen, LIGHT_GREEN, mouse, DRAG_RADIUS)
+    else:
+        pygame.draw.circle(screen, LIGHT_GREEN, mouse, EDGE_CREATION_RADIUS)
 
     for edge in edges:
-        pygame.draw.line(screen, BLACK, (edge.start.x,
-                         edge.start.y), (edge.end.x, edge.end.y))
+        dx = edge.start.x - edge.end.x
+        dy = edge.start.y - edge.end.y
+        distance = (dx ** 2 + dy ** 2) ** 0.5
+        dlen = (min(abs(distance - edge.initial_distance), 10))
+        tension = dlen * 255 // 10
+        color = (tension, (255 - tension), 0)
+        pygame.draw.line(screen, color,
+                         (edge.start.x, edge.start.y),
+                         (edge.end.x, edge.end.y))
 
     for vertex in vertices:
         pygame.draw.circle(screen, BLACK, (vertex.x, vertex.y), vertex.mass)
@@ -84,25 +100,48 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
+    dragging = None
 
     running = True
+    lastmouse = pygame.mouse.get_pos()
     while running:
         ev = pygame.event.get()
-
         for event in ev:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                posx, posy = pygame.mouse.get_pos()
+                for v in vertices:
+                    if (v.x - posx) ** 2 + (v.y - posy) ** 2 < DRAG_RADIUS ** 2:
+                        if dragging is None:
+                            dragging = []
+                        dragging.append(v)
+                        v.pinned = True
+                lastmouse = (posx, posy)
+            if event.type == pygame.MOUSEMOTION:
+                if dragging is not None:
+                    newmouse = pygame.mouse.get_pos()
+                    for v in dragging:
+                        v.x += newmouse[0] - lastmouse[0]
+                        v.y += newmouse[1] - lastmouse[1]
+                    lastmouse = newmouse
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                new_v = Vertex(pos[0], pos[1])
-                for v in vertices:
-                    if (v.x - new_v.x) ** 2 + (v.y - new_v.y) ** 2 < EDGE_CREATION_RADIUS ** 2:
-                        new_edge = Edge(v, new_v)
-                        edges.append(new_edge)
-                vertices.append(new_v)
+                if dragging is None:
+                    new_v = Vertex(pos[0], pos[1])
+                    for v in vertices:
+                        if (v.x - new_v.x) ** 2 + (v.y - new_v.y) ** 2 < EDGE_CREATION_RADIUS ** 2:
+                            new_edge = Edge(v, new_v)
+                            edges.append(new_edge)
+                    vertices.append(new_v)
+                else:
+                    for v in dragging:
+                        v.pinned = False
+                    dragging = None
 
             if event.type == pygame.QUIT:
                 running = False
 
-        step(clock.get_time())
+        for _ in range(SUBSTEPS):
+            step(16)
         draw(screen)
         clock.tick(60)
 

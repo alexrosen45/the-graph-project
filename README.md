@@ -1,4 +1,4 @@
-![image](https://github.com/alexrosen45/the-graph-project/blob/master/resouorces/logo.png)
+![image](https://github.com/alexrosen45/the-graph-project/blob/master/resources/logo.png)
 
 
 # The Graph Project

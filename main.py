@@ -5,6 +5,10 @@ Main simulation file
 import pygame
 import math
 
+from graph.vertex import Vertex
+from graph.edge import Edge
+
+
 (width, height) = (800, 600)
 BLUE = (0, 0, 255)
 EDGE_CREATION_RADIUS = 100
@@ -13,37 +17,6 @@ SPRING_CONSTANT = 0.1
 FRICTION = 0.98
 GROUND_FRICTION = 0.98
 GRAVITY = 0.1
-
-
-class Vertex:
-    """
-    Vertex class that stores a mass in a system of springs
-    """
-    mass: float
-    x: float
-    y: float
-    vx: float
-    vy: float
-
-    def __init__(self, x, y):
-        self.mass = 5
-        self.x = x
-        self.y = y
-        self.vx = 0
-        self.vy = 0
-
-
-class Edge:
-    """Massless spring, applies spring forces"""
-    initial_distance = 5
-    start: Vertex
-    end: Vertex
-
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-        self.initial_distance = ((start.x - end.x) ** 2 + (start.y - end.y) ** 2) ** 0.5
-
 
 vertices = []
 edges = []
@@ -94,7 +67,8 @@ def draw(screen):
         pygame.draw.circle(screen, BLUE, (vertex.x, vertex.y), vertex.mass)
 
     for edge in edges:
-        pygame.draw.line(screen, BLUE, (edge.start.x, edge.start.y), (edge.end.x, edge.end.y))
+        pygame.draw.line(screen, BLUE, (edge.start.x,
+                         edge.start.y), (edge.end.x, edge.end.y))
 
     pygame.display.update()
 

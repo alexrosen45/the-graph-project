@@ -11,64 +11,68 @@ from graph.edge import Edge
 
 (width, height) = (800, 600)
 BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+LIGHT_GREEN = (128, 255, 212)
 EDGE_CREATION_RADIUS = 100
 
-SPRING_CONSTANT = 0.1
-FRICTION = 0.98
-GROUND_FRICTION = 0.98
-GRAVITY = 0.1
+SPRING_CONSTANT = 0.5
+FRICTION = 0.02
+GROUND_FRICTION = 0.02
+GRAVITY = 0.01
 
 vertices = []
 edges = []
 
 
-def step():
+def step(time_elapsed: int):
     """Execute a physics logic step for the simulation, updating all vertices and edges"""
+    dt = time_elapsed / 1000 * 60
     for vertex in vertices:
-        vertex.vx *= FRICTION
-        vertex.vy *= FRICTION
-        if vertex.y + 2 * vertex.mass < height:
-            vertex.vy += GRAVITY
-        vertex.x += vertex.vx
-        vertex.y += vertex.vy
+        vertex.vx *= (1 - (FRICTION * dt))
+        vertex.vy *= (1 - (FRICTION * dt))
+        # if vertex.y + 2 * vertex.mass < height:
+        vertex.vy += GRAVITY * dt
+        vertex.x += (vertex.vx * dt)
+        vertex.y += (vertex.vy * dt)
 
     for edge in edges:
         dx = edge.start.x - edge.end.x
         dy = edge.start.y - edge.end.y
         distance = (dx ** 2 + dy ** 2) ** 0.5
-        fx = SPRING_CONSTANT * dx * (1 - edge.initial_distance / distance)
-        fy = SPRING_CONSTANT * dy * (1 - edge.initial_distance / distance)
+        dlen = (max(min(distance - edge.initial_distance, 10), -10))
+        fx = SPRING_CONSTANT * dx * dlen / distance * dt
+        fy = SPRING_CONSTANT * dy * dlen / distance * dt
         edge.start.vx -= fx / edge.start.mass
         edge.start.vy -= fy / edge.start.mass
         edge.end.vx += fx / edge.end.mass
         edge.end.vy += fy / edge.end.mass
 
     for vertex in vertices:
-        if vertex.y - vertex.mass >= height:
-            vertex.y = height - vertex.mass
-            if math.fabs(vertex.vy) > 1:
-                vertex.vy = -math.fabs(vertex.vy) * 0.2
-            else:
-                vertex.vy = 0
-            vertex.vx *= GROUND_FRICTION
+        vertex.y = min(vertex.y, height)
+        # if math.fabs(vertex.vy) > 1:
+        #     vertex.vy = -math.fabs(vertex.vy) * 0.2
+        # else:
+        # vertex.vy = 0
+        # vertex.vx *= (1 - (GROUND_FRICTION * dt))
 
 
 def draw(screen):
     """
     Draw all vertices and edges to the screen
     """
-
-    screen.fill((0, 0, 0))
+    # change background color
+    screen.fill(WHITE)
 
     mouse = pygame.mouse.get_pos()
-    pygame.draw.circle(screen, (50, 50, 50), mouse, EDGE_CREATION_RADIUS)
-
-    for vertex in vertices:
-        pygame.draw.circle(screen, BLUE, (vertex.x, vertex.y), vertex.mass)
+    pygame.draw.circle(screen, LIGHT_GREEN, mouse, EDGE_CREATION_RADIUS)
 
     for edge in edges:
-        pygame.draw.line(screen, BLUE, (edge.start.x,
+        pygame.draw.line(screen, BLACK, (edge.start.x,
                          edge.start.y), (edge.end.x, edge.end.y))
+
+    for vertex in vertices:
+        pygame.draw.circle(screen, BLACK, (vertex.x, vertex.y), vertex.mass)
 
     pygame.display.update()
 
@@ -79,6 +83,7 @@ def main():
     """
     pygame.init()
     screen = pygame.display.set_mode((width, height))
+    clock = pygame.time.Clock()
 
     running = True
     while running:
@@ -97,8 +102,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        step()
+        step(clock.get_time())
         draw(screen)
+        clock.tick(60)
 
 
 if __name__ == "__main__":

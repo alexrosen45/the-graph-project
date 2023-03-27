@@ -1,6 +1,8 @@
 from graph.edge import Edge
 from graph.vertex import Vertex
 import pygame
+import csv
+import os.path
 
 (width, height) = (800, 600)
 
@@ -71,10 +73,11 @@ class SpringMassGraph:
 
     def remove_last_vertex(self) -> None:
         """Remove the last vertex added to the graph."""
-        v = self.vertices.pop()
-        self.edges = [
-            e for e in self.edges if e.start != v and e.end != v
-        ]
+        if len(self.vertices) > 0:
+            v = self.vertices.pop()
+            self.edges = [
+                e for e in self.edges if e.start != v and e.end != v
+            ]
 
     def reset(self) -> None:
         """Remove all vertices and edges from self."""
@@ -137,3 +140,72 @@ class SpringMassGraph:
         """Clamp vertex coordinates."""
         for v in self.vertices:
             v.clamp(height, width)
+
+    def load_from_csv(self, filename: str) -> None:
+        """Load a graph from a csv file with the following format:
+        
+        - The first line of the consists of two integers n,k. The number of vertices n
+        and the number of edges k
+        - The next n lines will consist of data needed to instantiate a vertex
+        (x, y)
+        - The next k lines will consist of data needed to instantiate an edge
+        which would consist of two numbers i,j, where i is the list index of the 
+        edge's start node and j is the list index of the edge's end node
+        (i, j)
+
+        Do nothing if the file is empty or doesn't exist
+
+        Preconditions:
+        - The file is properly formatted
+        """
+        if not os.path.isfile(filename):
+            return
+
+        with open(filename, 'r') as csvfile:
+            lines = list(csv.reader(csvfile))
+
+        if len(lines) == 0:
+            return
+
+        n, k = int(lines[0][0]), int(lines[0][1])
+
+        # Add the vertices
+        self.vertices = []
+        for i in range(1, n + 1):
+            x, y = float(lines[i][0]), float(lines[i][1])
+            vertex = Vertex(x, y)
+            self.vertices.append(vertex)
+
+        # Add the edges
+        self.edges = []
+        for i in range(n + 1, n + k + 1):
+            i, j = int(lines[i][0]), int(lines[i][1])
+            edge = Edge(self.vertices[i], self.vertices[j])
+            self.edges.append(edge)
+
+    def save_to_csv(self, filename: str) -> None:
+        """Save a graph to an csv file with the following format:
+        
+        - The first line of the consists of two integers n,k. The number of vertices n
+        and the number of edges k
+        - The next n lines will consist of data needed to instantiate a vertex
+        (x, y)
+        - The next k lines will consist of data needed to instantiate an edge
+        which would consist of two numbers i,j, where i is the list index of the 
+        edge's start node and j is the list index of the edge's end node
+        (i, j)
+        """
+        with open(filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            n, k = len(self.vertices), len(self.edges)
+
+            writer.writerow([n, k])
+            for vertex in self.vertices:
+                writer.writerow([vertex.x, vertex.y])
+
+            for edge in self.edges:
+                i = self.vertices.index(edge.start)
+                j = self.vertices.index(edge.end)
+                writer.writerow([i, j])
+
+        

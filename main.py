@@ -25,6 +25,14 @@ def main():
     while running:
         ev = pygame.event.get()
         for event in ev:
+            if event.type == pygame.KEYDOWN:
+                # save the graph configuration
+                if event.key == pygame.K_s:
+                    graph.save_to_csv('graph.csv')
+                # load a graph configuration
+                if event.key == pygame.K_l:
+                    graph.load_from_csv('graph.csv')
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 posx, posy = pygame.mouse.get_pos()
                 for v in graph.vertices:

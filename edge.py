@@ -1,5 +1,8 @@
-from vertex import Vertex
+"""
+This file holds our Edge class. It includes an initial distance and represent an edge in our graph
+"""
 import random
+from vertex import Vertex
 
 MIN_DISTANCE = 15
 
@@ -7,11 +10,11 @@ MIN_DISTANCE = 15
 class Edge:
     """Massless spring, applies spring forces."""
 
-    initial_distance = 5
+    initial_distance: float = 5
     start: Vertex
     end: Vertex
 
-    def __init__(self, start, end, is_random=False):
+    def __init__(self, start: Vertex, end: Vertex, is_random: bool = False) -> None:
         self.start = start
         self.end = end
 
@@ -25,7 +28,7 @@ class Edge:
         else:
             self.initial_distance = max(MIN_DISTANCE, distance**0.5)
 
-    def update(self, fx: float, fy: float):
+    def update(self, fx: float, fy: float) -> None:
         """Update self using fx and fy."""
         self.start.vx -= fx / self.start.mass
         self.start.vy -= fy / self.start.mass

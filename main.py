@@ -2,10 +2,7 @@
 Main simulation file
 """
 import pygame
-import pygame_widgets
-from pygame_widgets.slider import Slider
-from pygame_widgets.textbox import TextBox
-from graph.graph import SpringMassGraph
+from graph import SpringMassGraph
 from sliders.sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
 import file_dialog
 

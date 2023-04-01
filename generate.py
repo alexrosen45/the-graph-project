@@ -1,7 +1,7 @@
 import tkinter
 import tkinter.filedialog
 
-from graph.graph import SpringMassGraph
+from graph import SpringMassGraph
 
 
 def main() -> None:

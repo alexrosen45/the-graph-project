@@ -33,9 +33,8 @@ def load_sliders(screen: pygame.Surface) -> SliderTuple:
     )
 
     spring_slider = Slider(
-        screen, 600, 110, 100, 10, min=0, max=0.2, step=0.005
+        screen, 600, 110, 100, 10, min=0, max=0.9, step=0.005
     )
-    spring_slider.setValue(0.02)
     spring_output = TextBox(
         screen, 720, 105, 40, 25, fontSize=20
     )

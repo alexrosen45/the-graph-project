@@ -30,10 +30,15 @@ class Edge:
 
     def update(self, fx: float, fy: float) -> None:
         """Update self using fx and fy."""
-        self.start.vx -= fx / self.start.mass
-        self.start.vy -= fy / self.start.mass
-        self.end.vx += fx / self.end.mass
-        self.end.vy += fy / self.end.mass
+        if self.start.pinned and self.end.pinned:
+            return
+
+        start_multiplier = 1 if self.end.pinned else 0.5
+        end_multiplier = 1 if self.start.pinned else 0.5
+        self.start.vx -= start_multiplier * fx / self.start.mass
+        self.start.vy -= start_multiplier * fy / self.start.mass
+        self.end.vx += end_multiplier * fx / self.end.mass
+        self.end.vy += end_multiplier * fy / self.end.mass
 
 
 if __name__ == "__main__":

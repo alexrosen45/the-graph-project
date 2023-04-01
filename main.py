@@ -20,6 +20,7 @@ def main():
     clock = pygame.time.Clock()
     dragging = None
     graph = SpringMassGraph()
+    graph.create_cloth(50, 25, 10)
 
     running = True
     lastmouse = pygame.mouse.get_pos()

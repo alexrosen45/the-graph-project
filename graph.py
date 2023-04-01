@@ -134,9 +134,9 @@ class SpringMassGraph:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
             distance = (dx**2 + dy**2) ** 0.5
-            dlen = max(min(distance - edge.initial_distance, 10), -10)
-            fx = self.spring_constant * dx * dlen / distance * dt
-            fy = self.spring_constant * dy * dlen / distance * dt
+            dlen = max(min(self.spring_constant * (distance - edge.initial_distance), 9), -9)
+            fx =  dx * dlen / distance * dt
+            fy = dy * dlen / distance * dt
             edge.update(fx, fy)
 
     def _clamp_vertices(self) -> None:
@@ -180,7 +180,7 @@ class SpringMassGraph:
 
         # Add the edges
         for i in range(n + 1, n + k + 1):
-            i, j, d = int(lines[i][0]), int(lines[i][1]), int(lines[i][2])
+            i, j, d = int(lines[i][0]), int(lines[i][1]), float(lines[i][2])
             edge = Edge(self.vertices[i], self.vertices[j])
             edge.initial_distance = d
             self.edges.append(edge)
@@ -203,7 +203,7 @@ class SpringMassGraph:
 
             writer.writerow([n, k])
             for vertex in self.vertices:
-                writer.writerow([vertex.x, vertex])
+                writer.writerow([vertex.x, vertex.y])
 
             for edge in self.edges:
                 i = self.vertices.index(edge.start)
@@ -258,7 +258,7 @@ class SpringMassGraph:
         """
         self.reset()
 
-        start_x = width/2 - x_len * vertex_dist
+        start_x = width/2 - ((x_len * vertex_dist) / 2)
 
         grid = []
         for i in range(0, y_len):
@@ -272,17 +272,18 @@ class SpringMassGraph:
         # pin certain nodes
         grid[0][0].pinned = True
         grid[0][x_len - 1].pinned = True
-        grid[0][int(x_len / 2)].pinned = True
+        grid[0][int(x_len / 3)].pinned = True
+        grid[0][int(2 * x_len / 3)].pinned = True
 
         for i in range(0, y_len):
             for j in range(0, x_len):
                 if i - 1 >= 0:
                     self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
-                if i + 1 < x_len:
+                if i + 1 < y_len:
                     self.edges.append(Edge(grid[i][j], grid[i + 1][j]))
                 if j - 1 >= 0:
                     self.edges.append(Edge(grid[i][j], grid[i][j - 1]))
-                if j + 1 < y_len:
+                if j + 1 < x_len:
                     self.edges.append(Edge(grid[i][j], grid[i][j + 1]))
 
     def create_pyramid(self) -> None:

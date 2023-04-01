@@ -1,5 +1,5 @@
-from edge import Edge
-from vertex import Vertex
+from graph.edge import Edge
+from graph.vertex import Vertex
 import pygame
 import math
 import csv
@@ -55,7 +55,8 @@ class SpringMassGraph:
         if is_near_vertex:
             pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.DRAG_RADIUS)
         else:
-            pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.EDGE_CREATION_RADIUS)
+            pygame.draw.circle(screen, LIGHT_GREEN, mouse,
+                               self.EDGE_CREATION_RADIUS)
 
         self._draw_edges(screen)
         self._draw_vertices(screen)
@@ -109,7 +110,8 @@ class SpringMassGraph:
             tension = dlen * 255 // 10
             color = (tension, (255 - tension), 0)
             pygame.draw.line(
-                screen, color, (edge.start.x, edge.start.y), (edge.end.x, edge.end.y)
+                screen, color, (edge.start.x,
+                                edge.start.y), (edge.end.x, edge.end.y)
             )
 
     def _step(self, time_elapsed: int) -> None:
@@ -219,7 +221,8 @@ class SpringMassGraph:
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
             new_vertex = Vertex(
-                center_x + length * math.cos(theta), center_y + length * math.sin(theta)
+                center_x + length *
+                math.cos(theta), center_y + length * math.sin(theta)
             )
             if i == 0:
                 first_vertex = new_vertex
@@ -237,7 +240,8 @@ class SpringMassGraph:
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
             new_vertex = Vertex(
-                center_x + length * math.cos(theta), center_y + length * math.sin(theta)
+                center_x + length *
+                math.cos(theta), center_y + length * math.sin(theta)
             )
             self.vertices.append(new_vertex)
 

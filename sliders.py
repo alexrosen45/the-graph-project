@@ -2,10 +2,14 @@ import pygame
 import pygame_widgets
 from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
-from graph.graph import SpringMassGraph
+from graph import SpringMassGraph
 
 
-def load_sliders(screen):
+SliderTuple = (Slider, TextBox, Slider, TextBox, Slider, TextBox)
+SliderTextboxTuple = (TextBox, TextBox, TextBox)
+
+
+def load_sliders(screen: pygame.Surface) -> SliderTuple:
     """Load pygame_widgets sliders for UI."""
     gravity_slider = Slider(
         screen, 600, 50, 100, 10, min=0, max=0.2, step=0.005
@@ -41,7 +45,7 @@ def load_sliders(screen):
     )
 
 
-def load_slider_textboxes():
+def load_slider_textboxes() -> SliderTextboxTuple:
     """Load pygame textboxes for sliders."""
     comic_sans = pygame.font.SysFont('Comic Sans MS', 15)
     gravity_text = comic_sans.render('Gravity', False, (0, 0, 0))
@@ -50,8 +54,8 @@ def load_slider_textboxes():
     return (gravity_text, friction_text, spring_text)
 
 
-def update_sliders(graph: SpringMassGraph, gravity_slider, friction_slider, spring_slider,
-                   gravity_output, friction_output, spring_output, ev):
+def update_sliders(graph: SpringMassGraph, gravity_slider: Slider, friction_slider: Slider, spring_slider: Slider,
+                   gravity_output: TextBox, friction_output: TextBox, spring_output: TextBox, ev: pygame.event.Event) -> None:
     """Update sliders and change graph attributes."""
     # update slider and graph attributes
     gravity = gravity_slider.getValue()
@@ -70,8 +74,30 @@ def update_sliders(graph: SpringMassGraph, gravity_slider, friction_slider, spri
     pygame_widgets.update(ev)
 
 
-def draw_slider_text(screen, gravity_text, friction_text, spring_text):
+def draw_slider_text(screen: pygame.Surface, gravity_text: TextBox, friction_text: TextBox, spring_text: TextBox) -> None:
     """Draw text for slider descriptions."""
     screen.blit(gravity_text, (540, 45))
     screen.blit(friction_text, (535, 75))
     screen.blit(spring_text, (490, 105))
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+
+    import python_ta
+    python_ta.check_all(
+        config={
+            "extra-imports": [
+                "math",
+                "csv",
+                "pygame",
+                "random",
+                "edge",
+                "path",
+                "os.path",
+            ],
+            "allowed-io": ["load_from_csv", "save_to_csv"],
+            "max-line-length": 100,
+        }
+    )

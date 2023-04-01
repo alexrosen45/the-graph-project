@@ -9,6 +9,7 @@ import file_dialog
 
 (width, height) = (800, 600)
 
+
 def main():
     """
     Initialize pygame, create the screen, initialize

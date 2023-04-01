@@ -90,8 +90,8 @@ def main():
         clock.tick(60)
 
         # update slider, draw slider text, and update graph attributes
-        update_sliders(graph, gravity_slider, friction_slider, spring_slider,
-                       gravity_output, friction_output, spring_output, ev)
+        update_sliders(graph, (gravity_slider, friction_slider, spring_slider),
+                       (gravity_output, friction_output, spring_output), ev)
         draw_slider_text(screen, gravity_text, friction_text, spring_text)
 
         pygame.display.update()
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": ["pygame", "pygame_widgets", "file_dialog", "graph.graph", "sliders.sliders"],
+            "extra-imports": ["pygame", "pygame_widgets", "file_dialog", "graph", "sliders"],
             "allowed-io": [],
             "max-line-length": 100,
         }

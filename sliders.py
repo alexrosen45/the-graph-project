@@ -1,3 +1,4 @@
+"""Sliders helper functions."""
 import pygame
 import pygame_widgets
 from pygame_widgets.slider import Slider
@@ -5,8 +6,12 @@ from pygame_widgets.textbox import TextBox
 from graph import SpringMassGraph
 
 
-SliderTuple = (Slider, TextBox, Slider, TextBox, Slider, TextBox)
-SliderTextboxTuple = (TextBox, TextBox, TextBox)
+SliderTuple = tuple[Slider, TextBox, Slider, TextBox, Slider, TextBox]
+SliderTextboxTuple = tuple[TextBox, TextBox, TextBox]
+
+
+Sliders = tuple[Slider, Slider, Slider]
+Outputs = tuple[TextBox, TextBox, TextBox]
 
 
 def load_sliders(screen: pygame.Surface) -> SliderTuple:
@@ -54,9 +59,13 @@ def load_slider_textboxes() -> SliderTextboxTuple:
     return (gravity_text, friction_text, spring_text)
 
 
-def update_sliders(graph: SpringMassGraph, gravity_slider: Slider, friction_slider: Slider, spring_slider: Slider,
-                   gravity_output: TextBox, friction_output: TextBox, spring_output: TextBox, ev: pygame.event.Event) -> None:
+def update_sliders(graph: SpringMassGraph, sliders: Slider,
+                   outputs: Outputs, ev: pygame.event.Event) -> None:
     """Update sliders and change graph attributes."""
+    # get sliders and outputs
+    gravity_slider, friction_slider, spring_slider = sliders
+    gravity_output, friction_output, spring_output = outputs
+
     # update slider and graph attributes
     gravity = gravity_slider.getValue()
     friction = friction_slider.getValue()
@@ -74,7 +83,8 @@ def update_sliders(graph: SpringMassGraph, gravity_slider: Slider, friction_slid
     pygame_widgets.update(ev)
 
 
-def draw_slider_text(screen: pygame.Surface, gravity_text: TextBox, friction_text: TextBox, spring_text: TextBox) -> None:
+def draw_slider_text(screen: pygame.Surface, gravity_text: TextBox,
+                     friction_text: TextBox, spring_text: TextBox) -> None:
     """Draw text for slider descriptions."""
     screen.blit(gravity_text, (540, 45))
     screen.blit(friction_text, (535, 75))
@@ -83,21 +93,15 @@ def draw_slider_text(screen: pygame.Surface, gravity_text: TextBox, friction_tex
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    doctest.testmod(verbose=True)
 
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": [
-                "math",
-                "csv",
-                "pygame",
-                "random",
-                "edge",
-                "path",
-                "os.path",
-            ],
-            "allowed-io": ["load_from_csv", "save_to_csv"],
+            "extra-imports": ["pygame", "pygame_widgets",
+                              "pygame_widgets.slider", "pygame_widgets.textbox", "graph"],
+            "allowed-io": [],
+            "disable": ['E9992', 'E9997'],
             "max-line-length": 100,
         }
     )

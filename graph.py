@@ -149,12 +149,11 @@ class SpringMassGraph:
 
         - The first line of the consists of two integers n,k. The number of vertices n
         and the number of edges k
-        - The next n lines will consist of data needed to instantiate a vertex
-        (x, y)
+        - The next n lines will consist of data needed to instantiate a vertex (x, y)
         - The next k lines will consist of data needed to instantiate an edge
         which would consist of two numbers i,j, where i is the list index of the
-        edge's start node and j is the list index of the edge's end node
-        (i, j)
+        edge's start node, j is the list index of the edge's end node, and d is the 
+        initial distance between nodes (i, j, d)
 
         Do nothing if the file is empty or doesn't exist
 
@@ -181,8 +180,9 @@ class SpringMassGraph:
 
         # Add the edges
         for i in range(n + 1, n + k + 1):
-            i, j = int(lines[i][0]), int(lines[i][1])
+            i, j, d = int(lines[i][0]), int(lines[i][1]), int(lines[i][2])
             edge = Edge(self.vertices[i], self.vertices[j])
+            edge.initial_distance = d
             self.edges.append(edge)
 
     def save_to_csv(self, filename: str) -> None:
@@ -193,9 +193,9 @@ class SpringMassGraph:
         - The next n lines will consist of data needed to instantiate a vertex
         (x, y)
         - The next k lines will consist of data needed to instantiate an edge
-        which would consist of two numbers i,j, where i is the list index of the
-        edge's start node and j is the list index of the edge's end node
-        (i, j)
+        which would consist of 3 numbers i,j,d where i is the list index of the
+        edge's start node, j is the list index of the edge's end node, and d is the 
+        initial distance between nodes (i, j, d)
         """
         with open(filename, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
@@ -203,14 +203,16 @@ class SpringMassGraph:
 
             writer.writerow([n, k])
             for vertex in self.vertices:
-                writer.writerow([vertex.x, vertex.y])
+                writer.writerow([vertex.x, vertex])
 
             for edge in self.edges:
                 i = self.vertices.index(edge.start)
                 j = self.vertices.index(edge.end)
-                writer.writerow([i, j])
+                writer.writerow([i, j, edge.initial_distance])
 
     def create_wheel(self, n: int, length: int) -> None:
+        """Create a wheel graph with n edges
+        """
         self.reset()
         center_x, center_y = (width / 2, height / 2)
         center = Vertex(center_x, center_y)
@@ -235,6 +237,8 @@ class SpringMassGraph:
         self.edges.append(Edge(old_vertex, first_vertex))
 
     def create_complete_graph(self, n: int, length: int) -> None:
+        """Create a fully connected graph with vertices in a circle
+        """
         self.reset()
         center_x, center_y = (width / 2, height / 2)
         for i in range(0, n):
@@ -249,56 +253,40 @@ class SpringMassGraph:
             for j in range(i + 1, n):
                 self.edges.append(Edge(self.vertices[i], self.vertices[j]))
 
-    def create_cloth(self, width: int, height: int) -> None:
-        start_x, start_y = (width / 2, height / 2)
+    def create_cloth(self, x_len: int, y_len: int, vertex_dist: int) -> None:
+        """Create a cloth like graph.
+        """
+        self.reset()
+
+        start_x = width/2 - x_len * vertex_dist
+
+        grid = []
+        for i in range(0, y_len):
+            row = []
+            for j in range(0, x_len):
+                vertex = Vertex(start_x + j * vertex_dist, i * vertex_dist)
+                row.append(vertex)
+                self.vertices.append(vertex)
+            grid.append(row)
+
+        # pin certain nodes
+        grid[0][0].pinned = True
+        grid[0][x_len - 1].pinned = True
+        grid[0][int(x_len / 2)].pinned = True
+
+        for i in range(0, y_len):
+            for j in range(0, x_len):
+                if i - 1 >= 0:
+                    self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
+                if i + 1 < x_len:
+                    self.edges.append(Edge(grid[i][j], grid[i + 1][j]))
+                if j - 1 >= 0:
+                    self.edges.append(Edge(grid[i][j], grid[i][j - 1]))
+                if j + 1 < y_len:
+                    self.edges.append(Edge(grid[i][j], grid[i][j + 1]))
 
     def create_pyramid(self) -> None:
         self.reset()
-
-        ax = 0
-        ay = 100
-        L = 4
-        Size = 100
-        dx = 0.5 * Size / L
-        dy = -math.sqrt(3) * dx
-
-        for i in range(L):
-            basex = ax - dx * i
-            basey = ay + dy * i
-
-            vertex1 = Vertex(basex, basey)
-            vertex2 = Vertex(basex - dx, basey + dy)
-            vertex3 = Vertex(basex + dx, basey + dy)
-
-            self.vertices.append(vertex1)
-            self.vertices.append(vertex2)
-            self.vertices.append(vertex3)
-            self.edges.append(Edge(vertex1, vertex2))
-            self.edges.append(Edge(vertex2, vertex3))
-            self.edges.append(Edge(vertex3, vertex1))
-
-            for j in range(i):
-                vertex1 = Vertex(basex + j * 2 * dx, basey)
-                vertex2 = Vertex(basex + j * 2 * dx + dx, basey + dy)
-                vertex3 = Vertex(basex + (j + 1) * 2 * dx, basey)
-
-                self.vertices.append(vertex1)
-                self.vertices.append(vertex2)
-                self.vertices.append(vertex3)
-                self.edges.append(Edge(vertex1, vertex2))
-                self.edges.append(Edge(vertex2, vertex3))
-                self.edges.append(Edge(vertex3, vertex1))
-
-                vertex1 = Vertex(basex + (j + 1) * 2 * dx, basey)
-                vertex2 = Vertex(basex + (j + 1) * 2 * dx - dx, basey + dy)
-                vertex3 = Vertex(basex + (j + 1) * 2 * dx + dx, basey + dy)
-
-                self.vertices.append(vertex1)
-                self.vertices.append(vertex2)
-                self.vertices.append(vertex3)
-                self.edges.append(Edge(vertex1, vertex2))
-                self.edges.append(Edge(vertex2, vertex3))
-                self.edges.append(Edge(vertex3, vertex1))
 
 
 if __name__ == "__main__":

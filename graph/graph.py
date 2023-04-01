@@ -19,10 +19,10 @@ class SpringMassGraph:
     vertices: list
     edges: list
 
-    SPRING_CONSTANT: float
-    FRICTION: float
-    GROUND_FRICTION: float
-    GRAVITY: float
+    spring_constant: float
+    friction: float
+    ground_friction: float
+    gravity: float
 
     SUBSTEPS = 10
     EDGE_CREATION_RADIUS = 100
@@ -32,10 +32,10 @@ class SpringMassGraph:
         self.vertices = []
         self.edges = []
 
-        self.SPRING_CONSTANT = spring_constant
-        self.GROUND_FRICTION = ground_friction
-        self.FRICTION = friction
-        self.GRAVITY = gravity
+        self.spring_constant = spring_constant
+        self.ground_friction = ground_friction
+        self.friction = friction
+        self.gravity = gravity
 
     def draw(self, screen) -> None:
         """Draw graph on pygame screen."""
@@ -121,7 +121,7 @@ class SpringMassGraph:
     def _update_vertices(self, dt: float) -> None:
         """Update vertices for simulation step relative to change in time."""
         for v in self.vertices:
-            v.update(self.FRICTION, self.GRAVITY, dt)
+            v.update(self.friction, self.gravity, dt)
 
     def _update_edges(self, dt: float) -> None:
         """Update edges for simulation step relative to change in time."""
@@ -130,8 +130,8 @@ class SpringMassGraph:
             dy = edge.start.y - edge.end.y
             distance = (dx ** 2 + dy ** 2) ** 0.5
             dlen = (max(min(distance - edge.initial_distance, 10), -10))
-            fx = self.SPRING_CONSTANT * dx * dlen / distance * dt
-            fy = self.SPRING_CONSTANT * dy * dlen / distance * dt
+            fx = self.spring_constant * dx * dlen / distance * dt
+            fy = self.spring_constant * dy * dlen / distance * dt
             edge.update(fx, fy)
 
     def _clamp_vertices(self) -> None:

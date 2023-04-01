@@ -3,6 +3,9 @@ Main simulation file
 """
 
 import pygame
+import pygame_widgets
+from pygame_widgets.slider import Slider
+from pygame_widgets.textbox import TextBox
 from graph.graph import SpringMassGraph
 
 
@@ -22,6 +25,16 @@ def main():
 
     running = True
     lastmouse = pygame.mouse.get_pos()
+
+    # slider
+    slider = Slider(
+        screen, 100, 100, 800, 40, min=0, max=99, step=1
+    )
+    output = TextBox(
+        screen, 475, 200, 50, 50, fontSize=30
+    )
+    # output.disable()  # Act as label instead of textbox
+
     while running:
         ev = pygame.event.get()
         for event in ev:
@@ -75,7 +88,17 @@ def main():
 
         graph.run_substeps()
         graph.draw(screen)
+
         clock.tick(60)
+
+        # update slider
+        output.setText(slider.getValue())
+        pygame_widgets.update(ev)
+
+        print(slider.getValue())
+        print(slider.colour)
+
+        pygame.display.update()
 
 
 if __name__ == "__main__":

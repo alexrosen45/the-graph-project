@@ -28,7 +28,7 @@ class SpringMassGraph:
     EDGE_CREATION_RADIUS = 100
     DRAG_RADIUS = 10
 
-    def __init__(self, spring_constant=0.02, friction=0.02, ground_friction=0.02, gravity=0.01) -> None:
+    def __init__(self, spring_constant=0.02, friction=0.02, ground_friction=0.02, gravity=0.02) -> None:
         self.vertices = []
         self.edges = []
 
@@ -56,8 +56,6 @@ class SpringMassGraph:
 
         self._draw_edges(screen)
         self._draw_vertices(screen)
-
-        pygame.display.update()
 
     def add_new_vertex(self, x, y) -> None:
         """Add to vertex to graph as position (x, y)."""
@@ -143,7 +141,7 @@ class SpringMassGraph:
 
     def load_from_csv(self, filename: str) -> None:
         """Load a graph from a csv file with the following format:
-        
+
         - The first line of the consists of two integers n,k. The number of vertices n
         and the number of edges k
         - The next n lines will consist of data needed to instantiate a vertex
@@ -185,7 +183,7 @@ class SpringMassGraph:
 
     def save_to_csv(self, filename: str) -> None:
         """Save a graph to an csv file with the following format:
-        
+
         - The first line of the consists of two integers n,k. The number of vertices n
         and the number of edges k
         - The next n lines will consist of data needed to instantiate a vertex
@@ -207,5 +205,3 @@ class SpringMassGraph:
                 i = self.vertices.index(edge.start)
                 j = self.vertices.index(edge.end)
                 writer.writerow([i, j])
-
-        

@@ -7,93 +7,109 @@ from sliders import load_sliders, load_slider_textboxes, update_sliders, draw_sl
 import file_dialog
 
 
-(width, height) = (800, 600)
+WIDTH, HEIGHT = 800, 600
 
 
-def main():
+def handle_event(graph: SpringMassGraph, event: pygame.event.Event) -> None:
+    """Handle pygame events for main."""
+    if event.type == pygame.KEYDOWN:
+        # save the graph configuration
+        if event.key == pygame.K_s:
+            file_name = file_dialog.ask_file().name
+            graph.save_to_csv(file_name)
+        # load a graph configuration
+        if event.key == pygame.K_l:
+            file_name = file_dialog.prompt_file()
+            graph.load_from_csv(file_name)
+
+    if event.type == pygame.KEYDOWN:
+        # remove last vertex added
+        if event.key == pygame.key.key_code("z"):
+            graph.remove_last_vertex()
+
+        # reset graph
+        if event.key == pygame.key.key_code("r"):
+            graph.reset()
+
+
+def handle_dragging(graph: SpringMassGraph, event: pygame.event.Event,
+                    dragging: list | None, lastmouse: tuple) -> list:
+    """Handle dragging of graphs."""
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        posx, posy = pygame.mouse.get_pos()
+        for v in graph.vertices:
+            if dragging is None:
+                dragging = []
+            if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2:
+                dragging.append(v)
+                v.pinned = True
+        lastmouse = (posx, posy)
+
+    if event.type == pygame.MOUSEMOTION:
+        if dragging is not None:
+            newmouse = pygame.mouse.get_pos()
+            for v in dragging:
+                v.x += newmouse[0] - lastmouse[0]
+                v.y += newmouse[1] - lastmouse[1]
+            lastmouse = newmouse
+
+    # add new vertex
+    if event.type == pygame.MOUSEBUTTONUP:
+        pos = pygame.mouse.get_pos()
+        if dragging is None:
+            graph.add_new_vertex(pos[0], pos[1])
+        else:
+            for v in dragging:
+                v.pinned = False
+            dragging = None
+
+    return (dragging, lastmouse)
+
+
+def main() -> None:
     """
     Initialize pygame, create the screen, initialize
     our graph, and execute the simulation's main loop.
     """
     pygame.init()
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    dragging = None
     graph = SpringMassGraph()
     graph.create_cloth(50, 25, 10)
 
     running = True
-    lastmouse = pygame.mouse.get_pos()
+    run_lst = [None, pygame.mouse.get_pos()]
 
     # load sliders and slider textboxes
-    gravity_slider, gravity_output, friction_slider, friction_output, spring_slider, spring_output = load_sliders(
-        screen
-    )
+    sliders = load_sliders(screen)
+    gravity_slider, gravity_output = sliders[0], sliders[1]
+    friction_slider, friction_output = sliders[2], sliders[3]
+    spring_slider, spring_output = sliders[4], sliders[5]
 
-    gravity_text, friction_text, spring_text = load_slider_textboxes()
+    slider_textboxes = load_slider_textboxes()
 
     while running:
         ev = pygame.event.get()
+
+        # handle events
         for event in ev:
-            if event.type == pygame.KEYDOWN:
-                # save the graph configuration
-                if event.key == pygame.K_s:
-                    file_name = file_dialog.ask_file().name
-                    graph.save_to_csv(file_name)
-                # load a graph configuration
-                if event.key == pygame.K_l:
-                    file_name = file_dialog.prompt_file()
-                    graph.load_from_csv(file_name)
+            handle_event(graph, event)
+            run_lst = handle_dragging(
+                graph, event, run_lst[0], run_lst[1])
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                posx, posy = pygame.mouse.get_pos()
-                for v in graph.vertices:
-                    if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2:
-                        if dragging is None:
-                            dragging = []
-                        dragging.append(v)
-                        v.pinned = True
-                lastmouse = (posx, posy)
-
-            if event.type == pygame.MOUSEMOTION:
-                if dragging is not None:
-                    newmouse = pygame.mouse.get_pos()
-                    for v in dragging:
-                        v.x += newmouse[0] - lastmouse[0]
-                        v.y += newmouse[1] - lastmouse[1]
-                    lastmouse = newmouse
-
-            # add new vertex
-            if event.type == pygame.MOUSEBUTTONUP:
-                pos = pygame.mouse.get_pos()
-                if dragging is None:
-                    graph.add_new_vertex(pos[0], pos[1])
-                else:
-                    for v in dragging:
-                        v.pinned = False
-                    dragging = None
-
-            if event.type == pygame.KEYDOWN:
-                # remove last vertex added
-                if event.key == pygame.key.key_code("z"):
-                    graph.remove_last_vertex()
-
-                # reset graph
-                if event.key == pygame.key.key_code("r"):
-                    graph.reset()
-
+            # handle quitting
             if event.type == pygame.QUIT:
                 running = False
 
         graph.run_substeps()
         graph.draw(screen)
-
         clock.tick(60)
 
         # update slider, draw slider text, and update graph attributes
         update_sliders(graph, (gravity_slider, friction_slider, spring_slider),
                        (gravity_output, friction_output, spring_output), ev)
-        draw_slider_text(screen, gravity_text, friction_text, spring_text)
+        draw_slider_text(
+            screen, slider_textboxes[0], slider_textboxes[1], slider_textboxes[2])
 
         pygame.display.update()
 
@@ -110,5 +126,7 @@ if __name__ == "__main__":
             "extra-imports": ["pygame", "pygame_widgets", "file_dialog", "graph", "sliders"],
             "allowed-io": [],
             "max-line-length": 100,
+            # get rid of incorrect "pygame has no" error
+            "disable": ['E1101'],
         }
     )

@@ -100,6 +100,7 @@ if __name__ == "__main__":
             "extra-imports": ["pygame", "pygame_widgets",
                               "pygame_widgets.slider", "pygame_widgets.textbox", "graph"],
             "allowed-io": [],
+            # allow for custom types (like in assignment)
             "disable": ['E9992', 'E9997'],
             "max-line-length": 100,
         }

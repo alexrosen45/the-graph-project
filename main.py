@@ -3,7 +3,7 @@ Main simulation file
 """
 import pygame
 from graph import SpringMassGraph
-from sliders.sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
+from sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
 import file_dialog
 
 

@@ -1,5 +1,5 @@
-from graph.edge import Edge
-from graph.vertex import Vertex
+from edge import Edge
+from vertex import Vertex
 import pygame
 import math
 import csv

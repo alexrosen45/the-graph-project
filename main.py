@@ -1,17 +1,16 @@
 """
 Main simulation file
 """
-
 import pygame
 import pygame_widgets
 from pygame_widgets.slider import Slider
 from pygame_widgets.textbox import TextBox
 from graph.graph import SpringMassGraph
 from sliders.sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
+import file_dialog
 
 
 (width, height) = (800, 600)
-
 
 def main():
     """
@@ -40,10 +39,12 @@ def main():
             if event.type == pygame.KEYDOWN:
                 # save the graph configuration
                 if event.key == pygame.K_s:
-                    graph.save_to_csv('graph.csv')
+                    file_name = file_dialog.ask_file().name
+                    graph.save_to_csv(file_name)
                 # load a graph configuration
                 if event.key == pygame.K_l:
-                    graph.load_from_csv('graph.csv')
+                    file_name = file_dialog.prompt_file()
+                    graph.load_from_csv(file_name)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 posx, posy = pygame.mouse.get_pos()

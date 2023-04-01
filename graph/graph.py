@@ -1,11 +1,11 @@
 from graph.edge import Edge
 from graph.vertex import Vertex
 import pygame
+import math
 import csv
 import os.path
 
 (width, height) = (800, 600)
-
 
 # colours for drawing graph
 BLUE = (0, 0, 255)
@@ -165,17 +165,16 @@ class SpringMassGraph:
         if len(lines) == 0:
             return
 
+        self.reset()
         n, k = int(lines[0][0]), int(lines[0][1])
 
         # Add the vertices
-        self.vertices = []
         for i in range(1, n + 1):
             x, y = float(lines[i][0]), float(lines[i][1])
             vertex = Vertex(x, y)
             self.vertices.append(vertex)
 
         # Add the edges
-        self.edges = []
         for i in range(n + 1, n + k + 1):
             i, j = int(lines[i][0]), int(lines[i][1])
             edge = Edge(self.vertices[i], self.vertices[j])
@@ -205,3 +204,95 @@ class SpringMassGraph:
                 i = self.vertices.index(edge.start)
                 j = self.vertices.index(edge.end)
                 writer.writerow([i, j])
+
+    def create_wheel(self, n: int, length: int) -> None:
+        self.reset()
+        center_x, center_y = (width/2, height/2)
+        center = Vertex(center_x, center_y)
+        self.vertices.append(center)
+
+        old_vertex = None
+        first_vertex = None
+        for i in range(0, n):
+            theta = (math.pi * 2) * (i / n)
+            new_vertex = Vertex(center_x + length * math.cos(theta), center_y + length * math.sin(theta))
+            if i == 0:
+                first_vertex = new_vertex
+            self.vertices.append(new_vertex)
+            self.edges.append(Edge(center, new_vertex))
+            if old_vertex is not None:
+                self.edges.append(Edge(old_vertex, new_vertex))
+            old_vertex = new_vertex
+
+        self.edges.append(Edge(old_vertex, first_vertex))
+
+    def create_complete_graph(self, n: int, length: int) -> None:
+        self.reset()
+        center_x, center_y = (width/2, height/2)
+        for i in range(0, n):
+            theta = (math.pi * 2) * (i / n)
+            new_vertex = Vertex(center_x + length * math.cos(theta), center_y + length * math.sin(theta))
+            self.vertices.append(new_vertex)
+
+        for i in range(0, n):
+            for j in range(i + 1, n):
+                self.edges.append(Edge(self.vertices[i], self.vertices[j]))
+
+    def create_cloth(self, width: int, height: int) -> None:
+        start_x, start_y = (width/2, height/2)
+
+
+    def create_pyramid(self) -> None:
+        self.reset()
+
+        ax = 0
+        ay = 100
+        L = 4
+        Size = 100
+        dx = 0.5 * Size / L
+        dy = - math.sqrt(3) * dx
+
+        for i in range(L):
+            basex = ax - dx * i
+            basey = ay + dy * i
+
+            vertex1 = Vertex(basex, basey)
+            vertex2 = Vertex(basex - dx, basey + dy)
+            vertex3 = Vertex(basex + dx, basey + dy)
+
+            self.vertices.append(vertex1)
+            self.vertices.append(vertex2)
+            self.vertices.append(vertex3)
+            self.edges.append(Edge(vertex1, vertex2))
+            self.edges.append(Edge(vertex2, vertex3))
+            self.edges.append(Edge(vertex3, vertex1))
+
+            for j in range(i):
+                vertex1 = Vertex(basex + j * 2 * dx, basey)
+                vertex2 = Vertex(basex + j * 2 * dx + dx, basey + dy)
+                vertex3 = Vertex(basex + (j + 1) * 2 * dx, basey)
+
+                self.vertices.append(vertex1)
+                self.vertices.append(vertex2)
+                self.vertices.append(vertex3)
+                self.edges.append(Edge(vertex1, vertex2))
+                self.edges.append(Edge(vertex2, vertex3))
+                self.edges.append(Edge(vertex3, vertex1))
+
+                vertex1 = Vertex(basex + (j + 1) * 2 * dx, basey)
+                vertex2 = Vertex(basex + (j + 1) * 2 * dx - dx, basey + dy)
+                vertex3 = Vertex(basex + (j + 1) * 2 * dx + dx, basey + dy)
+
+                self.vertices.append(vertex1)
+                self.vertices.append(vertex2)
+                self.vertices.append(vertex3)
+                self.edges.append(Edge(vertex1, vertex2))
+                self.edges.append(Edge(vertex2, vertex3))
+                self.edges.append(Edge(vertex3, vertex1))
+
+
+
+        
+
+        
+        

@@ -1,5 +1,5 @@
-from graph.edge import Edge
-from graph.vertex import Vertex
+from edge import Edge
+from vertex import Vertex
 import pygame
 import math
 import csv
@@ -16,6 +16,7 @@ LIGHT_GREEN = (128, 255, 212)
 
 class SpringMassGraph:
     """Spring mass graph."""
+
     vertices: list
     edges: list
 
@@ -28,7 +29,9 @@ class SpringMassGraph:
     EDGE_CREATION_RADIUS = 100
     DRAG_RADIUS = 10
 
-    def __init__(self, spring_constant=0.02, friction=0.02, ground_friction=0.02, gravity=0.02) -> None:
+    def __init__(
+        self, spring_constant=0.02, friction=0.02, ground_friction=0.02, gravity=0.02
+    ) -> None:
         self.vertices = []
         self.edges = []
 
@@ -44,15 +47,15 @@ class SpringMassGraph:
 
         is_near_vertex = False
         for vertex in self.vertices:
-            if (vertex.x - mouse[0]) ** 2 + (vertex.y - mouse[1]) ** 2 < self.DRAG_RADIUS ** 2:
+            if (vertex.x - mouse[0]) ** 2 + (
+                vertex.y - mouse[1]
+            ) ** 2 < self.DRAG_RADIUS**2:
                 is_near_vertex = True
                 break
         if is_near_vertex:
-            pygame.draw.circle(screen, LIGHT_GREEN,
-                               mouse, self.DRAG_RADIUS)
+            pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.DRAG_RADIUS)
         else:
-            pygame.draw.circle(screen, LIGHT_GREEN,
-                               mouse, self.EDGE_CREATION_RADIUS)
+            pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.EDGE_CREATION_RADIUS)
 
         self._draw_edges(screen)
         self._draw_vertices(screen)
@@ -63,7 +66,9 @@ class SpringMassGraph:
 
         # add edges within edge creation radius
         for v in self.vertices:
-            if (v.x - new_vertex.x) ** 2 + (v.y - new_vertex.y) ** 2 < self.EDGE_CREATION_RADIUS ** 2:
+            if (v.x - new_vertex.x) ** 2 + (
+                v.y - new_vertex.y
+            ) ** 2 < self.EDGE_CREATION_RADIUS**2:
                 new_edge = Edge(v, new_vertex)
                 self.edges.append(new_edge)
 
@@ -73,9 +78,7 @@ class SpringMassGraph:
         """Remove the last vertex added to the graph."""
         if len(self.vertices) > 0:
             v = self.vertices.pop()
-            self.edges = [
-                e for e in self.edges if e.start != v and e.end != v
-            ]
+            self.edges = [e for e in self.edges if e.start != v and e.end != v]
 
     def reset(self) -> None:
         """Remove all vertices and edges from self."""
@@ -101,13 +104,13 @@ class SpringMassGraph:
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
-            distance = (dx ** 2 + dy ** 2) ** 0.5
-            dlen = (min(abs(distance - edge.initial_distance), 10))
+            distance = (dx**2 + dy**2) ** 0.5
+            dlen = min(abs(distance - edge.initial_distance), 10)
             tension = dlen * 255 // 10
             color = (tension, (255 - tension), 0)
-            pygame.draw.line(screen, color,
-                             (edge.start.x, edge.start.y),
-                             (edge.end.x, edge.end.y))
+            pygame.draw.line(
+                screen, color, (edge.start.x, edge.start.y), (edge.end.x, edge.end.y)
+            )
 
     def _step(self, time_elapsed: int) -> None:
         """Execute a physics logic step for the simulation, updating all vertices and edges."""
@@ -128,8 +131,8 @@ class SpringMassGraph:
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
-            distance = (dx ** 2 + dy ** 2) ** 0.5
-            dlen = (max(min(distance - edge.initial_distance, 10), -10))
+            distance = (dx**2 + dy**2) ** 0.5
+            dlen = max(min(distance - edge.initial_distance, 10), -10)
             fx = self.spring_constant * dx * dlen / distance * dt
             fy = self.spring_constant * dy * dlen / distance * dt
             edge.update(fx, fy)
@@ -147,7 +150,7 @@ class SpringMassGraph:
         - The next n lines will consist of data needed to instantiate a vertex
         (x, y)
         - The next k lines will consist of data needed to instantiate an edge
-        which would consist of two numbers i,j, where i is the list index of the 
+        which would consist of two numbers i,j, where i is the list index of the
         edge's start node and j is the list index of the edge's end node
         (i, j)
 
@@ -159,7 +162,7 @@ class SpringMassGraph:
         if not os.path.isfile(filename):
             return
 
-        with open(filename, 'r') as csvfile:
+        with open(filename, "r") as csvfile:
             lines = list(csv.reader(csvfile))
 
         if len(lines) == 0:
@@ -188,11 +191,11 @@ class SpringMassGraph:
         - The next n lines will consist of data needed to instantiate a vertex
         (x, y)
         - The next k lines will consist of data needed to instantiate an edge
-        which would consist of two numbers i,j, where i is the list index of the 
+        which would consist of two numbers i,j, where i is the list index of the
         edge's start node and j is the list index of the edge's end node
         (i, j)
         """
-        with open(filename, 'w', newline='') as csvfile:
+        with open(filename, "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             n, k = len(self.vertices), len(self.edges)
 
@@ -207,7 +210,7 @@ class SpringMassGraph:
 
     def create_wheel(self, n: int, length: int) -> None:
         self.reset()
-        center_x, center_y = (width/2, height/2)
+        center_x, center_y = (width / 2, height / 2)
         center = Vertex(center_x, center_y)
         self.vertices.append(center)
 
@@ -215,7 +218,9 @@ class SpringMassGraph:
         first_vertex = None
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
-            new_vertex = Vertex(center_x + length * math.cos(theta), center_y + length * math.sin(theta))
+            new_vertex = Vertex(
+                center_x + length * math.cos(theta), center_y + length * math.sin(theta)
+            )
             if i == 0:
                 first_vertex = new_vertex
             self.vertices.append(new_vertex)
@@ -228,10 +233,12 @@ class SpringMassGraph:
 
     def create_complete_graph(self, n: int, length: int) -> None:
         self.reset()
-        center_x, center_y = (width/2, height/2)
+        center_x, center_y = (width / 2, height / 2)
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
-            new_vertex = Vertex(center_x + length * math.cos(theta), center_y + length * math.sin(theta))
+            new_vertex = Vertex(
+                center_x + length * math.cos(theta), center_y + length * math.sin(theta)
+            )
             self.vertices.append(new_vertex)
 
         for i in range(0, n):
@@ -239,8 +246,7 @@ class SpringMassGraph:
                 self.edges.append(Edge(self.vertices[i], self.vertices[j]))
 
     def create_cloth(self, width: int, height: int) -> None:
-        start_x, start_y = (width/2, height/2)
-
+        start_x, start_y = (width / 2, height / 2)
 
     def create_pyramid(self) -> None:
         self.reset()
@@ -250,7 +256,7 @@ class SpringMassGraph:
         L = 4
         Size = 100
         dx = 0.5 * Size / L
-        dy = - math.sqrt(3) * dx
+        dy = -math.sqrt(3) * dx
 
         for i in range(L):
             basex = ax - dx * i
@@ -291,8 +297,23 @@ class SpringMassGraph:
                 self.edges.append(Edge(vertex3, vertex1))
 
 
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
 
-        
-
-        
-        
+    import python_ta
+    python_ta.check_all(
+        config={
+            "extra-imports": [
+                "math",
+                "csv",
+                "pygame",
+                "random",
+                "edge",
+                "path",
+                "os.path",
+            ],
+            "allowed-io": ["load_from_csv", "save_to_csv"],
+            "max-line-length": 100,
+        }
+    )

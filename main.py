@@ -101,3 +101,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    import doctest
+    doctest.testmod()
+
+    import python_ta
+    python_ta.check_all(
+        config={
+            "extra-imports": ["pygame", "pygame_widgets", "file_dialog", "graph.graph", "sliders.sliders"],
+            "allowed-io": [],
+            "max-line-length": 100,
+        }
+    )

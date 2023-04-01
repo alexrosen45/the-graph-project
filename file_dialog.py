@@ -14,3 +14,16 @@ def ask_file():
     file_name = tkinter.filedialog.asksaveasfile(parent=top)
     top.withdraw()  # hide window
     return file_name
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod(verbose=True)
+
+    import python_ta
+    python_ta.check_all(
+        config={
+            "extra-imports": ["tkinter", "tkinter.filedialog"],
+            "allowed-io": [],
+            "max-line-length": 100,
+        }
+    )

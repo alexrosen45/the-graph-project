@@ -45,7 +45,7 @@ class SpringMassGraph:
         self.friction = friction
         self.gravity = gravity
 
-    def draw(self, screen) -> None:
+    def draw(self, screen: pygame.Surface) -> None:
         """Draw graph on pygame screen."""
         screen.fill(WHITE)
         mouse = pygame.mouse.get_pos()
@@ -84,7 +84,7 @@ class SpringMassGraph:
         """Remove the last vertex added to the graph."""
         if len(self.vertices) > 0:
             v = self.vertices.pop()
-            self.edges = [e for e in self.edges if e.start != v and e.end != v]
+            self.edges = [e for e in self.edges if v not in {e.start, e.end}]
 
     def reset(self) -> None:
         """Remove all vertices and edges from self."""
@@ -97,15 +97,15 @@ class SpringMassGraph:
 
     def run_substeps(self) -> None:
         """Run self.step self.SUBSTEPS times."""
-        for _ in range(self.SUBSTEPS):
+        for _i in range(self.SUBSTEPS):
             self._step(16)
 
-    def _draw_vertices(self, screen) -> None:
+    def _draw_vertices(self, screen: pygame.Surface) -> None:
         """Draw self.vertices on pygame screen."""
         for v in self.vertices:
             pygame.draw.circle(screen, BLACK, (v.x, v.y), v.mass)
 
-    def _draw_edges(self, screen) -> None:
+    def _draw_edges(self, screen: pygame.Surface) -> None:
         """Draw self.edges on pygame screen."""
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
@@ -115,8 +115,9 @@ class SpringMassGraph:
             tension = dlen * 255 // 10
             color = (tension, (255 - tension), 0)
             pygame.draw.line(
-                screen, color, (edge.start.x,
-                                edge.start.y), (edge.end.x, edge.end.y)
+                screen, color,
+                (edge.start.x, edge.start.y),
+                (edge.end.x, edge.end.y)
             )
 
     def _step(self, time_elapsed: int) -> None:

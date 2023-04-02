@@ -14,7 +14,7 @@ class Vertex:
     vy: float
     pinned: bool
 
-    def __init__(self, x: float, y: float, randomize: bool = True) -> None:
+    def __init__(self, x: float, y: float, randomize: bool = False) -> None:
         self.mass = 5
         if randomize:
             # We use the 1 - random.random() trick to ensure 0 is not a possible value

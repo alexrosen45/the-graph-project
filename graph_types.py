@@ -97,8 +97,7 @@ class PyramidGraph(SpringMassGraph):
     def __init__(self, count: int, vertex_dist: float) -> None:
         super().__init__()
 
-        # Generate an equilateral triangle subdivided into equilateral triangles
-        start_x = WIDTH / 2 
+        start_x = WIDTH / 2
 
         y_height = math.sqrt(3) * vertex_dist / 2
         grid = []

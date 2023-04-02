@@ -4,6 +4,7 @@ file they want to load or save. It is accessible by pressing l or s.
 """
 import tkinter
 import tkinter.filedialog
+import re
 from typing import IO
 
 
@@ -21,9 +22,12 @@ class FileDialog:
         self.top.withdraw()
 
     def prompt_file(self) -> str:
-        """Create a Tk file dialog and cleanup when finished"""
+        """Create a Tk file dialog and cleanup when finished
+        If the specified file is not in CSV format, return an empty string"""
         file_name = tkinter.filedialog.askopenfilename(parent=self.top)
         self.top.withdraw()  # hide window
+        if type(file_name) != str or re.search("\.[cC][sS][vV]", file_name) is None:
+            return ""
         return file_name
 
     def ask_file(self) -> (IO | None):

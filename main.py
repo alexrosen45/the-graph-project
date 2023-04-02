@@ -33,12 +33,12 @@ def handle_event(graph: SpringMassGraph, event: pygame.event.Event) -> None:
 
 
 def handle_dragging(graph: SpringMassGraph, event: pygame.event.Event,
-                    dragging: list | None, lastmouse: tuple) -> list:
+                    dragging: list | None, lastmouse: tuple) -> tuple:
     """Handle dragging of graphs."""
     if event.type == pygame.MOUSEBUTTONDOWN:
         posx, posy = pygame.mouse.get_pos()
         for v in graph.vertices:
-            if dragging is None:
+            if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2 and dragging is None:
                 dragging = []
             if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2:
                 dragging.append(v)
@@ -74,19 +74,20 @@ def main() -> None:
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
+    dragging = None
     graph = SpringMassGraph()
     graph.create_cloth(50, 25, 10)
 
     running = True
-    run_lst = [None, pygame.mouse.get_pos()]
+    lastmouse = pygame.mouse.get_pos()
 
     # load sliders and slider textboxes
     sliders = load_sliders(screen)
-    gravity_slider, gravity_output = sliders[0], sliders[1]
+    gravity_lst = [sliders[0], sliders[1]]
     friction_slider, friction_output = sliders[2], sliders[3]
     spring_slider, spring_output = sliders[4], sliders[5]
 
-    slider_textboxes = load_slider_textboxes()
+    textboxes = load_slider_textboxes()
 
     while running:
         ev = pygame.event.get()
@@ -94,8 +95,8 @@ def main() -> None:
         # handle events
         for event in ev:
             handle_event(graph, event)
-            run_lst = handle_dragging(
-                graph, event, run_lst[0], run_lst[1])
+            dragging, lastmouse = handle_dragging(
+                graph, event, dragging, lastmouse)
 
             # handle quitting
             if event.type == pygame.QUIT:
@@ -106,10 +107,9 @@ def main() -> None:
         clock.tick(60)
 
         # update slider, draw slider text, and update graph attributes
-        update_sliders(graph, (gravity_slider, friction_slider, spring_slider),
-                       (gravity_output, friction_output, spring_output), ev)
-        draw_slider_text(
-            screen, slider_textboxes[0], slider_textboxes[1], slider_textboxes[2])
+        update_sliders(graph, (gravity_lst[0], friction_slider, spring_slider),
+                       (gravity_lst[1], friction_output, spring_output), ev)
+        draw_slider_text(screen, textboxes[0], textboxes[1], textboxes[2])
 
         pygame.display.update()
 

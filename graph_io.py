@@ -38,8 +38,10 @@ def load_from_csv(graph: SpringMassGraph, filename: str) -> None:
 
     # Add the vertices
     for i in range(1, n + 1):
-        x, y = float(lines[i][0]), float(lines[i][1])
+        x, y, pinned = float(lines[i][0]), float(lines[i][1]), lines[i][2]
         vertex = Vertex(x, y)
+        if pinned == 'True':
+            vertex.pinned = True
         graph.vertices.append(vertex)
 
     # Add the edges
@@ -68,7 +70,7 @@ def save_to_csv(graph: SpringMassGraph, filename: str) -> None:
 
         writer.writerow([n, k])
         for vertex in graph.vertices:
-            writer.writerow([vertex.x, vertex.y])
+            writer.writerow([vertex.x, vertex.y, vertex.pinned])
 
         for edge in graph.edges:
             i = graph.vertices.index(edge.start)

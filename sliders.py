@@ -25,7 +25,7 @@ def load_sliders(screen: pygame.Surface, graph: SpringMassGraph) -> SliderTuple:
     )
 
     friction_slider = Slider(
-        screen, 600, 80, 100, 10, min=0.7, max=1, step=0.005
+        screen, 600, 80, 100, 10, min=0, max=1, step=0.005
     )
     friction_slider.setValue(graph.friction)
     friction_output = TextBox(

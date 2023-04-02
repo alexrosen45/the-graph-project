@@ -48,15 +48,27 @@ class GraphEventHandler:
                     v.y += newmouse[1] - self.lastmouse[1]
                 self.lastmouse = newmouse
 
-        # add new vertex
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
-            if self.dragging is None:
-                graph.add_new_vertex(pos[0], pos[1])
-            else:
-                for v in self.dragging:
-                    v.pinned = False
-                self.dragging = None
+            if self.allow_click(pos):
+                self.add_new_vertex(graph, pos)
+
+    def add_new_vertex(self, graph: SpringMassGraph, pos: tuple) -> None:
+        """Add new vertex to graph using event data."""
+        if self.dragging is None:
+            graph.add_new_vertex(pos[0], pos[1])
+        else:
+            for v in self.dragging:
+                v.pinned = False
+            self.dragging = None
+
+    def allow_click(self, pos: tuple) -> bool:
+        """Prevent vertex creation near sliders."""
+        x, y = pos
+        if 500 < x < 780 and 25 < y < 150:
+            return False
+        else:
+            return True
 
     def handle_event(
         self,

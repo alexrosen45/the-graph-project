@@ -11,15 +11,17 @@ from edge import Edge
 def load_from_csv(graph: SpringMassGraph, filename: str) -> None:
     """Load a graph from a csv file with the following format:
 
-    - The first line of the consists of two integers n,k. The number of vertices n
-    and the number of edges k
-    - The next n lines will consist of data needed to instantiate a vertex (x, y)
-    - The next k lines will consist of data needed to instantiate an edge
-    which would consist of two numbers i,j, where i is the list index of the
-    edge's start node, j is the list index of the edge's end node, and d is the
-    initial distance between nodes (i, j, d)
+    - The first line of the file consists of two integers (n, k), where n is the number of vertices
+        and k is the number of edges
+    - The next n lines consist of data needed to instantiate a vertex (x, y, pinned)
+        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing 
+        whether a vertex is pinned or not
+    - The next k lines consist of data needed to instantiate an edge
+        which consists of three numbers (i,j,d) where i is the list index of the
+        edge's start node, j is the list index of the edge's end node, and d is the
+        initial distance between nodes 
 
-    Do nothing if the file is empty or doesn't exist
+    Do nothing if the file is empty or doesn't exist.
 
     Preconditions:
     - The file is properly formatted
@@ -55,14 +57,17 @@ def load_from_csv(graph: SpringMassGraph, filename: str) -> None:
 def save_to_csv(graph: SpringMassGraph, filename: str) -> None:
     """Save a graph to an csv file with the following format:
 
-    - The first line of the consists of two integers n,k. The number of vertices n
-    and the number of edges k
-    - The next n lines will consist of data needed to instantiate a vertex
-    (x, y)
-    - The next k lines will consist of data needed to instantiate an edge
-    which would consist of 3 numbers i,j,d where i is the list index of the
-    edge's start node, j is the list index of the edge's end node, and d is the
-    initial distance between nodes (i, j, d)
+    - The first line of the file consists of two integers (n, k), where n is the number of vertices
+        and k is the number of edges
+    - The next n lines consist of data needed to instantiate a vertex (x, y, pinned)
+        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing 
+        whether a vertex is pinned or not
+    - The next k lines consist of data needed to instantiate an edge
+        which consists of three numbers (i,j,d) where i is the list index of the
+        edge's start node, j is the list index of the edge's end node, and d is the
+        initial distance between nodes 
+    
+    Do nothing if the file write fails.
     """
     with open(filename, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)

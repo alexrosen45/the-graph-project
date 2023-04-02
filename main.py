@@ -12,41 +12,16 @@ from file_dialog import FileDialog
 WIDTH, HEIGHT = 800, 600
 
 
-def handle_event(
-    graph: SpringMassGraph,
-    file_dialog: FileDialog,
-    event: pygame.event.Event
-) -> None:
-    """Handle pygame events for main."""
-    if event.type == pygame.KEYDOWN:
-        # save the graph configuration
-        if event.key == pygame.K_s:
-            file_name = file_dialog.ask_file()
-            if file_name is not None:
-                save_to_csv(graph, file_name.name)
-        # load a graph configuration
-        if event.key == pygame.K_l:
-            file_name = file_dialog.prompt_file()
-            load_from_csv(graph, file_name)
-
-    if event.type == pygame.KEYDOWN:
-        # remove last vertex added
-        if event.key == pygame.key.key_code("z"):
-            graph.remove_last_vertex()
-
-        # reset graph
-        if event.key == pygame.key.key_code("r"):
-            graph.reset()
-
-
-class Dragger:
+class GraphEventHandler:
     """A helper class to manage dragging of vertices"""
     dragging: list | None
     lastmouse: tuple
+    file_dialog: FileDialog
 
     def __init__(self) -> None:
+        self.file_dialog = FileDialog()
         self.dragging = None
-        self.lastmouse = pygame.mouse.get_pos()
+        self.lastmouse = (0, 0)
 
     def check_drag_on_mousedown(self, graph: SpringMassGraph, pos: tuple) -> None:
         """Check if vertex is being dragged on mouse down."""
@@ -58,7 +33,7 @@ class Dragger:
                 self.dragging.append(v)
                 v.pinned = True
 
-    def handle_dragging(self, graph: SpringMassGraph, event: pygame.event.Event) -> tuple:
+    def handle_graph_mouse(self, graph: SpringMassGraph, event: pygame.event.Event) -> tuple:
         """Handle dragging of graphs."""
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
@@ -83,17 +58,45 @@ class Dragger:
                     v.pinned = False
                 self.dragging = None
 
+    def handle_event(
+        self,
+        graph: SpringMassGraph,
+        event: pygame.event.Event
+    ) -> None:
+        """Handle pygame events for main."""
+        if event.type == pygame.KEYDOWN:
+            # save the graph configuration
+            if event.key == pygame.K_s:
+                file_name = self.file_dialog.ask_file()
+                if file_name is not None:
+                    save_to_csv(graph, file_name.name)
+            # load a graph configuration
+            if event.key == pygame.K_l:
+                file_name = self.file_dialog.prompt_file()
+                load_from_csv(graph, file_name)
+
+        if event.type == pygame.KEYDOWN:
+            # remove last vertex added
+            if event.key == pygame.key.key_code("z"):
+                graph.remove_last_vertex()
+
+            # reset graph
+            if event.key == pygame.key.key_code("r"):
+                graph.reset()
+
+        self.handle_graph_mouse(graph, event)
+
 
 def main() -> None:
     """
     Initialize pygame, create the screen, initialize
     our graph, and execute the simulation's main loop.
     """
-    file_dialog = FileDialog()
+    # This event handler needs to be above pygame.init, see file_dialog.py for more details
+    event_handler = GraphEventHandler()
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    dragger = Dragger()
     graph = ClothGraph(50, 25, 10)
 
     running = True
@@ -111,8 +114,7 @@ def main() -> None:
 
         # handle events
         for event in ev:
-            handle_event(graph, file_dialog, event)
-            dragger.handle_dragging(graph, event)
+            event_handler.handle_event(graph, event)
 
             # handle quitting
             if event.type == pygame.QUIT:

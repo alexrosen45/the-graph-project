@@ -63,7 +63,7 @@ class ClothGraph(SpringMassGraph):
     Create a cloth like graph.
     """
     def __init__(self, x_len: int, y_len: int, vertex_dist: int) -> None:
-        super().__init__()
+        super().__init__(gravity=0.01, friction=0.99, spring_constant=0.5)
 
         start_x = WIDTH / 2 - ((x_len * vertex_dist) / 2)
 
@@ -84,22 +84,37 @@ class ClothGraph(SpringMassGraph):
 
         for i in range(0, y_len):
             for j in range(0, x_len):
-                if i - 1 >= 0:
+                if i > 0:
                     self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
-                if i + 1 < y_len:
-                    self.edges.append(Edge(grid[i][j], grid[i + 1][j]))
-                if j - 1 >= 0:
+                if j > 0:
                     self.edges.append(Edge(grid[i][j], grid[i][j - 1]))
-                if j + 1 < x_len:
-                    self.edges.append(Edge(grid[i][j], grid[i][j + 1]))
 
 
 class PyramidGraph(SpringMassGraph):
     """
     A work in progress graph to make tall structures efficiently
     """
-    def __init__(self) -> None:
+    def __init__(self, count: int, vertex_dist: float) -> None:
         super().__init__()
+
+        # Generate an equilateral triangle subdivided into equilateral triangles
+        start_x = WIDTH / 2 - ((count * vertex_dist) / 2)
+
+        grid = []
+        for i in range(count):
+            row = []
+            for j in range(i + 1):
+                vertex = Vertex(start_x + j * vertex_dist, i * vertex_dist)
+                row.append(vertex)
+                self.vertices.append(vertex)
+            grid.append(row)
+
+        for i in range(count):
+            for j in range(i + 1):
+                if i > 0:
+                    self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
+                if j > 0:
+                    self.edges.append(Edge(grid[i][j], grid[i][j - 1]))
 
 
 if __name__ == "__main__":

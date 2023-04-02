@@ -14,36 +14,37 @@ Sliders = tuple[Slider, Slider, Slider]
 Outputs = tuple[TextBox, TextBox, TextBox]
 
 
-def load_sliders(screen: pygame.Surface) -> SliderTuple:
+def load_sliders(screen: pygame.Surface, graph: SpringMassGraph) -> SliderTuple:
     """Load pygame_widgets sliders for UI."""
     gravity_slider = Slider(
         screen, 600, 50, 100, 10, min=0, max=0.2, step=0.005
     )
-    gravity_slider.setValue(0.02)
+    gravity_slider.setValue(graph.gravity)
     gravity_output = TextBox(
         screen, 720, 45, 40, 25, fontSize=20
     )
 
     friction_slider = Slider(
-        screen, 600, 80, 100, 10, min=0, max=0.2, step=0.005
+        screen, 600, 80, 100, 10, min=0.7, max=1, step=0.005
     )
-    friction_slider.setValue(0.02)
+    friction_slider.setValue(graph.friction)
     friction_output = TextBox(
         screen, 720, 75, 40, 25, fontSize=20
     )
 
     spring_slider = Slider(
-        screen, 600, 110, 100, 10, min=0, max=0.9, step=0.005
+        screen, 600, 110, 100, 10, min=0, max=0.95, step=0.005
     )
+    spring_slider.setValue(graph.spring_constant)
     spring_output = TextBox(
         screen, 720, 105, 40, 25, fontSize=20
     )
 
     return (
-        friction_slider,
-        friction_output,
         gravity_slider,
         gravity_output,
+        friction_slider,
+        friction_output,
         spring_slider,
         spring_output,
     )

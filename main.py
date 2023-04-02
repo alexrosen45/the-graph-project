@@ -102,8 +102,8 @@ def main() -> None:
     running = True
 
     # load sliders and slider textboxes
-    sliders = load_sliders(screen)
-    gravity_lst = [sliders[0], sliders[1]]
+    sliders = load_sliders(screen, graph)
+    gravity_slider, gravity_output = sliders[0], sliders[1]
     friction_slider, friction_output = sliders[2], sliders[3]
     spring_slider, spring_output = sliders[4], sliders[5]
 
@@ -125,8 +125,8 @@ def main() -> None:
         clock.tick(60)
 
         # update slider, draw slider text, and update graph attributes
-        update_sliders(graph, (gravity_lst[0], friction_slider, spring_slider),
-                       (gravity_lst[1], friction_output, spring_output), ev)
+        update_sliders(graph, (gravity_slider, friction_slider, spring_slider),
+                       (gravity_output, friction_output, spring_output), ev)
         draw_slider_text(screen, textboxes[0], textboxes[1], textboxes[2])
 
         pygame.display.update()

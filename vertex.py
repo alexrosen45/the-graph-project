@@ -14,24 +14,28 @@ class Vertex:
     vy: float
     pinned: bool
 
-    def __init__(self, x: float, y: float) -> None:
+    def __init__(self, x: float, y: float, randomize: bool = True) -> None:
         self.mass = 5
-        # We use the 1 - random.random() trick to ensure 0 is not a possible value
-        # This is because random.random() returns a vlue in the range [0, 1)
-        self.x = x + ((1 - random.random()) * 0.02 - 0.01)
-        self.y = y + ((1 - random.random()) * 0.02 - 0.01)
+        if randomize:
+            # We use the 1 - random.random() trick to ensure 0 is not a possible value
+            # This is because random.random() returns a vlue in the range [0, 1)
+            self.x = x + ((1 - random.random()) * 0.02 - 0.01)
+            self.y = y + ((1 - random.random()) * 0.02 - 0.01)
+        else:
+            self.x = x
+            self.y = y
         self.vx = 0
         self.vy = 0
         self.pinned = False
 
-    def update(self, friction: float, gravity: float, dt: float) -> None:
-        """Update self using graph friction, graph gravity, and time change."""
-        self.vx *= 1 - (friction * dt)
-        self.vy *= 1 - (friction * dt)
-        self.vy += gravity * dt
+    def update(self, friction: float, gravity: float) -> None:
+        """Update self using graph friction, graph gravity."""
         if not self.pinned:
-            self.x += self.vx * dt
-            self.y += self.vy * dt
+            self.vy += gravity
+            self.x += self.vx
+            self.y += self.vy
+        self.vx *= friction
+        self.vy *= friction
 
     def clamp(self, height: int, width: int) -> None:
         """Clamp self using height and width."""

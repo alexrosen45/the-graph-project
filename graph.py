@@ -23,25 +23,22 @@ class SpringMassGraph:
 
     spring_constant: float
     friction: float
-    ground_friction: float
     gravity: float
 
-    SUBSTEPS: int = 10
+    SUBSTEPS: int = 16
     EDGE_CREATION_RADIUS: float = 100
     DRAG_RADIUS: float = 10
 
     def __init__(
         self,
-        spring_constant: float = 0.02,
-        friction: float = 0.02,
-        ground_friction: float = 0.02,
-        gravity: float = 0.02
+        spring_constant: float = 0.9,
+        friction: float = 0.98,
+        gravity: float = 0.1
     ) -> None:
         self.vertices = []
         self.edges = []
 
         self.spring_constant = spring_constant
-        self.ground_friction = ground_friction
         self.friction = friction
         self.gravity = gravity
 
@@ -65,7 +62,7 @@ class SpringMassGraph:
 
     def add_new_vertex(self, x: float, y: float) -> None:
         """Add to vertex to graph as position (x, y)."""
-        new_vertex = Vertex(x, y)
+        new_vertex = Vertex(x, y, randomize=True)
 
         # add edges within edge creation radius
         for v in self.vertices:
@@ -87,14 +84,10 @@ class SpringMassGraph:
         self.vertices = []
         self.edges = []
 
-    def get_time_change(self, time_elapsed: float) -> float:
-        """Return time change based on time elapsed."""
-        return time_elapsed / 1000 * 60
-
     def run_substeps(self) -> None:
         """Run self.step self.SUBSTEPS times."""
         for _i in range(self.SUBSTEPS):
-            self._step(16)
+            self._step()
 
     def _draw_vertices(self, screen: pygame.Surface) -> None:
         """Draw self.vertices on pygame screen."""
@@ -116,29 +109,26 @@ class SpringMassGraph:
                 (edge.end.x, edge.end.y)
             )
 
-    def _step(self, time_elapsed: int) -> None:
+    def _step(self) -> None:
         """Execute a physics logic step for the simulation, updating all vertices and edges."""
-        # calculate change in time
-        dt = self.get_time_change(time_elapsed)
-
-        self._update_vertices(dt)
-        self._update_edges(dt)
+        self._update_edges()
+        self._update_vertices()
         self._clamp_vertices()
 
-    def _update_vertices(self, dt: float) -> None:
+    def _update_vertices(self) -> None:
         """Update vertices for simulation step relative to change in time."""
         for v in self.vertices:
-            v.update(self.friction, self.gravity, dt)
+            v.update(self.friction, self.gravity)
 
-    def _update_edges(self, dt: float) -> None:
+    def _update_edges(self) -> None:
         """Update edges for simulation step relative to change in time."""
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
             distance = (dx ** 2 + dy ** 2) ** 0.5
             dlen = max(min(self.spring_constant * (distance - edge.initial_distance), 9), -9)
-            fx = dx * dlen / distance * dt
-            fy = dy * dlen / distance * dt
+            fx = dx * dlen / distance
+            fy = dy * dlen / distance
             edge.update(fx, fy)
 
     def _clamp_vertices(self) -> None:

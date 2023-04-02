@@ -50,13 +50,10 @@ class SpringMassGraph:
         screen.fill(WHITE)
         mouse = pygame.mouse.get_pos()
 
-        is_near_vertex = False
-        for vertex in self.vertices:
-            if (vertex.x - mouse[0]) ** 2 + (
-                vertex.y - mouse[1]
-            ) ** 2 < self.DRAG_RADIUS**2:
-                is_near_vertex = True
-                break
+        is_near_vertex = any(
+            (vertex.x - mouse[0]) ** 2 + (vertex.y - mouse[1]) ** 2 < self.DRAG_RADIUS ** 2
+            for vertex in self.vertices
+        )
         if is_near_vertex:
             pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.DRAG_RADIUS)
         else:
@@ -72,9 +69,8 @@ class SpringMassGraph:
 
         # add edges within edge creation radius
         for v in self.vertices:
-            if (v.x - new_vertex.x) ** 2 + (
-                v.y - new_vertex.y
-            ) ** 2 < self.EDGE_CREATION_RADIUS**2:
+            distance = (v.x - new_vertex.x) ** 2 + (v.y - new_vertex.y) ** 2
+            if distance < self.EDGE_CREATION_RADIUS ** 2:
                 new_edge = Edge(v, new_vertex)
                 self.edges.append(new_edge)
 
@@ -110,10 +106,10 @@ class SpringMassGraph:
         for edge in self.edges:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
-            distance = (dx**2 + dy**2) ** 0.5
-            dlen = min(abs(distance - edge.initial_distance), 10)
-            tension = dlen * 255 // 10
-            color = (tension, (255 - tension), 0)
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            delta_len = min(abs(distance - edge.initial_distance), 10)
+            gray_color = delta_len * 255 // 10
+            color = (gray_color, (255 - gray_color), 0)
             pygame.draw.line(
                 screen, color,
                 (edge.start.x, edge.start.y),

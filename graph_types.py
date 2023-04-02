@@ -2,7 +2,7 @@
 This is how we generate our various datasets, by constructing various graphs through inheritance
 """
 import math
-from graph import SpringMassGraph, WIDTH, HEIGHT
+from graph import SpringMassGraph
 from edge import Edge
 from vertex import Vertex
 
@@ -11,10 +11,11 @@ class WheelGraph(SpringMassGraph):
     """
     Create a wheel graph with n edges
     """
-    def __init__(self, n: int, length: int) -> None:
+
+    def __init__(self, n: int, length: int, screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
-        center_x, center_y = (WIDTH / 2, HEIGHT / 2)
+        center_x, center_y = (screen_width / 2, screen_height / 2)
         center = Vertex(center_x, center_y)
         self.vertices.append(center)
 
@@ -41,10 +42,11 @@ class CompleteGraph(SpringMassGraph):
     """
     Create a fully connected graph with vertices in a circle
     """
-    def __init__(self, n: int, length: int) -> None:
+
+    def __init__(self, n: int, length: int, screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
-        center_x, center_y = (WIDTH / 2, HEIGHT / 2)
+        center_x, center_y = (screen_width / 2, screen_height / 2)
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
             new_vertex = Vertex(
@@ -62,10 +64,11 @@ class ClothGraph(SpringMassGraph):
     """
     Create a cloth like graph.
     """
-    def __init__(self, x_len: int, y_len: int, vertex_dist: int) -> None:
+
+    def __init__(self, x_len: int, y_len: int, vertex_dist: int, screen_width: int = 800) -> None:
         super().__init__(gravity=0.01, friction=0.99, spring_constant=0.5)
 
-        start_x = WIDTH / 2 - ((x_len * vertex_dist) / 2)
+        start_x = screen_width / 2 - ((x_len * vertex_dist) / 2)
 
         grid = []
         for i in range(0, y_len):
@@ -94,17 +97,19 @@ class PyramidGraph(SpringMassGraph):
     """
     A work in progress graph to make tall structures efficiently
     """
-    def __init__(self, count: int, vertex_dist: float) -> None:
+
+    def __init__(self, count: int, vertex_dist: float, screen_width: int = 800) -> None:
         super().__init__()
 
-        start_x = WIDTH / 2
+        start_x = screen_width / 2
 
         y_height = math.sqrt(3) * vertex_dist / 2
         grid = []
         for i in range(count):
             row = []
             for j in range(i + 1):
-                vertex = Vertex(start_x + (j - i / 2) * vertex_dist, i * y_height)
+                vertex = Vertex(start_x + (j - i / 2) *
+                                vertex_dist, i * y_height)
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)

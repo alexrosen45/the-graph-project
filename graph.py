@@ -6,14 +6,6 @@ import pygame
 from edge import Edge
 from vertex import Vertex
 
-(WIDTH, HEIGHT) = (800, 600)
-
-# colours for drawing graph
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-LIGHT_GREEN = (128, 255, 212)
-
 
 class SpringMassGraph:
     """Spring mass graph."""
@@ -28,6 +20,12 @@ class SpringMassGraph:
     SUBSTEPS: int = 16
     EDGE_CREATION_RADIUS: float = 100
     DRAG_RADIUS: float = 10
+
+    # colors for drawing graph
+    BLUE: tuple = (0, 0, 255)
+    BLACK: tuple = (0, 0, 0)
+    WHITE: tuple = (255, 255, 255)
+    LIGHT_GREEN: tuple = (128, 255, 212)
 
     def __init__(
         self,
@@ -44,17 +42,19 @@ class SpringMassGraph:
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draw graph on pygame screen."""
-        screen.fill(WHITE)
+        screen.fill(self.WHITE)
         mouse = pygame.mouse.get_pos()
 
         is_near_vertex = any(
-            (vertex.x - mouse[0]) ** 2 + (vertex.y - mouse[1]) ** 2 < self.DRAG_RADIUS ** 2
+            (vertex.x - mouse[0]) ** 2 + (vertex.y -
+                                          mouse[1]) ** 2 < self.DRAG_RADIUS ** 2
             for vertex in self.vertices
         )
         if is_near_vertex:
-            pygame.draw.circle(screen, LIGHT_GREEN, mouse, self.DRAG_RADIUS)
+            pygame.draw.circle(screen, self.LIGHT_GREEN,
+                               mouse, self.DRAG_RADIUS)
         else:
-            pygame.draw.circle(screen, LIGHT_GREEN, mouse,
+            pygame.draw.circle(screen, self.LIGHT_GREEN, mouse,
                                self.EDGE_CREATION_RADIUS)
 
         self._draw_edges(screen)
@@ -92,7 +92,7 @@ class SpringMassGraph:
     def _draw_vertices(self, screen: pygame.Surface) -> None:
         """Draw self.vertices on pygame screen."""
         for v in self.vertices:
-            pygame.draw.circle(screen, BLACK, (v.x, v.y), v.mass)
+            pygame.draw.circle(screen, self.BLACK, (v.x, v.y), v.mass)
 
     def _draw_edges(self, screen: pygame.Surface) -> None:
         """Draw self.edges on pygame screen."""
@@ -126,15 +126,18 @@ class SpringMassGraph:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
             distance = (dx ** 2 + dy ** 2) ** 0.5
-            dlen = max(min(self.spring_constant * (distance - edge.initial_distance), 9), -9)
+            dlen = max(min(self.spring_constant *
+                       (distance - edge.initial_distance), 9), -9)
+            if distance == 0:
+                distance += 0.0001
             fx = dx * dlen / distance
             fy = dy * dlen / distance
             edge.update(fx, fy)
 
-    def _clamp_vertices(self) -> None:
+    def _clamp_vertices(self, screen_width: int = 800, screen_height: int = 600) -> None:
         """Clamp vertex coordinates."""
         for v in self.vertices:
-            v.clamp(HEIGHT, WIDTH)
+            v.clamp(screen_height, screen_width)
 
 
 if __name__ == "__main__":

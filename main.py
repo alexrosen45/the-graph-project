@@ -99,7 +99,7 @@ class GraphEventHandler:
         self.handle_graph_mouse(graph, event)
 
 
-def main() -> None:
+def main(graph: SpringMassGraph) -> None:
     """
     Initialize pygame, create the screen, initialize
     our graph, and execute the simulation's main loop.
@@ -109,7 +109,6 @@ def main() -> None:
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    graph = PyramidGraph(5, 50)
 
     running = True
 
@@ -134,7 +133,6 @@ def main() -> None:
 
         graph.run_substeps()
         graph.draw(screen)
-        clock.tick(60)
 
         # update slider, draw slider text, and update graph attributes
         update_sliders(graph, (gravity_slider, friction_slider, spring_slider),
@@ -142,10 +140,13 @@ def main() -> None:
         draw_slider_text(screen, textboxes[0], textboxes[1], textboxes[2])
 
         pygame.display.update()
+        clock.tick(60)
 
 
 if __name__ == "__main__":
-    main()
+    # Also, try ClothGraph, WheelGraph, CompleteGraph, or SpringMassGraph for a blank graph
+    my_graph = PyramidGraph(8, 99)
+    main(my_graph)
 
     import doctest
     doctest.testmod()

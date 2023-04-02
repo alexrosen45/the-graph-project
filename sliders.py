@@ -76,9 +76,7 @@ def update_sliders(graph: SpringMassGraph, sliders: Slider,
     graph.spring_constant = spring
 
     gravity_output.setText(gravity_slider.getValue())
-    pygame_widgets.update(ev)
     friction_output.setText(friction_slider.getValue())
-    pygame_widgets.update(ev)
     spring_output.setText(spring_slider.getValue())
     pygame_widgets.update(ev)
 

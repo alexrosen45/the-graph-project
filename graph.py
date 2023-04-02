@@ -46,8 +46,8 @@ class SpringMassGraph:
         mouse = pygame.mouse.get_pos()
 
         is_near_vertex = any(
-            (vertex.x - mouse[0]) ** 2 + (vertex.y -
-                                          mouse[1]) ** 2 < self.DRAG_RADIUS ** 2
+            ((vertex.x - mouse[0]) ** 2 + (vertex.y - mouse[1]) ** 2)
+            < self.DRAG_RADIUS ** 2
             for vertex in self.vertices
         )
         if is_near_vertex:
@@ -126,8 +126,12 @@ class SpringMassGraph:
             dx = edge.start.x - edge.end.x
             dy = edge.start.y - edge.end.y
             distance = (dx ** 2 + dy ** 2) ** 0.5
-            dlen = max(min(self.spring_constant *
-                       (distance - edge.initial_distance), 9), -9)
+            dlen = max(
+                min(
+                    self.spring_constant * (distance - edge.initial_distance),
+                    9),
+                -9
+            )
             if distance == 0:
                 distance += 0.0001
             fx = dx * dlen / distance

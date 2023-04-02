@@ -12,7 +12,8 @@ class WheelGraph(SpringMassGraph):
     Create a wheel graph with n edges
     """
 
-    def __init__(self, n: int, length: int, screen_width: int = 800, screen_height: int = 600) -> None:
+    def __init__(self, n: int, length: int,
+                 screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
         center_x, center_y = (screen_width / 2, screen_height / 2)
@@ -43,7 +44,8 @@ class CompleteGraph(SpringMassGraph):
     Create a fully connected graph with vertices in a circle
     """
 
-    def __init__(self, n: int, length: int, screen_width: int = 800, screen_height: int = 600) -> None:
+    def __init__(self, n: int, length: int,
+                 screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
         center_x, center_y = (screen_width / 2, screen_height / 2)
@@ -108,8 +110,10 @@ class PyramidGraph(SpringMassGraph):
         for i in range(count):
             row = []
             for j in range(i + 1):
-                vertex = Vertex(start_x + (j - i / 2) *
-                                vertex_dist, i * y_height)
+                vertex = Vertex(
+                    start_x + (j - i / 2) * vertex_dist,
+                    i * y_height
+                )
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)

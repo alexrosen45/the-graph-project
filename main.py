@@ -3,24 +3,31 @@ Main simulation file
 """
 import pygame
 from graph import SpringMassGraph
+from graph_io import load_from_csv, save_to_csv
+from graph_types import ClothGraph
 from sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
-import file_dialog
+from file_dialog import FileDialog
 
 
 WIDTH, HEIGHT = 800, 600
 
 
-def handle_event(graph: SpringMassGraph, event: pygame.event.Event) -> None:
+def handle_event(
+    graph: SpringMassGraph,
+    file_dialog: FileDialog,
+    event: pygame.event.Event
+) -> None:
     """Handle pygame events for main."""
     if event.type == pygame.KEYDOWN:
         # save the graph configuration
         if event.key == pygame.K_s:
-            file_name = file_dialog.ask_file().name
-            graph.save_to_csv(file_name)
+            file_name = file_dialog.ask_file()
+            if file_name is not None:
+                save_to_csv(graph, file_name.name)
         # load a graph configuration
         if event.key == pygame.K_l:
             file_name = file_dialog.prompt_file()
-            graph.load_from_csv(file_name)
+            load_from_csv(graph, file_name)
 
     if event.type == pygame.KEYDOWN:
         # remove last vertex added
@@ -32,38 +39,49 @@ def handle_event(graph: SpringMassGraph, event: pygame.event.Event) -> None:
             graph.reset()
 
 
-def handle_dragging(graph: SpringMassGraph, event: pygame.event.Event,
-                    dragging: list | None, lastmouse: tuple) -> tuple:
-    """Handle dragging of graphs."""
-    if event.type == pygame.MOUSEBUTTONDOWN:
-        posx, posy = pygame.mouse.get_pos()
+class Dragger:
+    """A helper class to manage dragging of vertices"""
+    dragging: list | None
+    lastmouse: tuple
+
+    def __init__(self) -> None:
+        self.dragging = None
+        self.lastmouse = pygame.mouse.get_pos()
+
+    def check_drag_on_mousedown(self, graph: SpringMassGraph, pos: tuple) -> None:
+        """Check if vertex is being dragged on mouse down."""
+        posx, posy = pos
         for v in graph.vertices:
-            if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2 and dragging is None:
-                dragging = []
             if (v.x - posx) ** 2 + (v.y - posy) ** 2 < graph.DRAG_RADIUS ** 2:
-                dragging.append(v)
+                if self.dragging is None:
+                    self.dragging = []
+                self.dragging.append(v)
                 v.pinned = True
-        lastmouse = (posx, posy)
 
-    if event.type == pygame.MOUSEMOTION:
-        if dragging is not None:
-            newmouse = pygame.mouse.get_pos()
-            for v in dragging:
-                v.x += newmouse[0] - lastmouse[0]
-                v.y += newmouse[1] - lastmouse[1]
-            lastmouse = newmouse
+    def handle_dragging(self, graph: SpringMassGraph, event: pygame.event.Event) -> tuple:
+        """Handle dragging of graphs."""
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            self.check_drag_on_mousedown(graph, pos)
+            self.lastmouse = pos
 
-    # add new vertex
-    if event.type == pygame.MOUSEBUTTONUP:
-        pos = pygame.mouse.get_pos()
-        if dragging is None:
-            graph.add_new_vertex(pos[0], pos[1])
-        else:
-            for v in dragging:
-                v.pinned = False
-            dragging = None
+        if event.type == pygame.MOUSEMOTION:
+            if self.dragging is not None:
+                newmouse = pygame.mouse.get_pos()
+                for v in self.dragging:
+                    v.x += newmouse[0] - self.lastmouse[0]
+                    v.y += newmouse[1] - self.lastmouse[1]
+                self.lastmouse = newmouse
 
-    return (dragging, lastmouse)
+        # add new vertex
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            if self.dragging is None:
+                graph.add_new_vertex(pos[0], pos[1])
+            else:
+                for v in self.dragging:
+                    v.pinned = False
+                self.dragging = None
 
 
 def main() -> None:
@@ -71,15 +89,14 @@ def main() -> None:
     Initialize pygame, create the screen, initialize
     our graph, and execute the simulation's main loop.
     """
+    file_dialog = FileDialog()
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    dragging = None
-    graph = SpringMassGraph()
-    graph.create_cloth(50, 25, 10)
+    dragger = Dragger()
+    graph = ClothGraph(50, 25, 10)
 
     running = True
-    lastmouse = pygame.mouse.get_pos()
 
     # load sliders and slider textboxes
     sliders = load_sliders(screen)
@@ -94,9 +111,8 @@ def main() -> None:
 
         # handle events
         for event in ev:
-            handle_event(graph, event)
-            dragging, lastmouse = handle_dragging(
-                graph, event, dragging, lastmouse)
+            handle_event(graph, file_dialog, event)
+            dragger.handle_dragging(graph, event)
 
             # handle quitting
             if event.type == pygame.QUIT:
@@ -123,7 +139,10 @@ if __name__ == "__main__":
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": ["pygame", "pygame_widgets", "file_dialog", "graph", "sliders"],
+            "extra-imports": [
+                "pygame", "pygame_widgets", "file_dialog",
+                "graph", "graph_io", "graph_types", "sliders"
+            ],
             "allowed-io": [],
             "max-line-length": 100,
             # get rid of incorrect "pygame has no" error

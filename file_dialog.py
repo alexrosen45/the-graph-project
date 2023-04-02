@@ -1,19 +1,37 @@
+"""
+This file contains our FileDialog classs, used to prompt the user which
+file they want to load or save. It is accessible by pressing l or s.
+"""
 import tkinter
 import tkinter.filedialog
+from typing import IO
 
-top = tkinter.Tk()
-top.withdraw()  # hide window
 
-def prompt_file():
-    """Create a Tk file dialog and cleanup when finished"""
-    file_name = tkinter.filedialog.askopenfilename(parent=top)
-    top.withdraw()  # hide window
-    return file_name
+class FileDialog:
+    """
+    It turns out to make a file dialog we need to use tkinger...
+    This was a painful learning process to get the file dialog to work on macOS
+    in combination with pygame. In particular, this tkinter class needs
+    to be initialized really early.
+    """
+    top: tkinter.Tk
 
-def ask_file():
-    file_name = tkinter.filedialog.asksaveasfile(parent=top)
-    top.withdraw()  # hide window
-    return file_name
+    def __init__(self) -> None:
+        self.top = tkinter.Tk()
+        self.top.withdraw()
+
+    def prompt_file(self) -> str:
+        """Create a Tk file dialog and cleanup when finished"""
+        file_name = tkinter.filedialog.askopenfilename(parent=self.top)
+        self.top.withdraw()  # hide window
+        return file_name
+
+    def ask_file(self) -> (IO | None):
+        """Create another Tk file dialog and cleanup when finished"""
+        file_name = tkinter.filedialog.asksaveasfile(parent=self.top)
+        self.top.withdraw()  # hide window
+        return file_name
+
 
 if __name__ == "__main__":
     import doctest
@@ -22,7 +40,7 @@ if __name__ == "__main__":
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": ["tkinter", "tkinter.filedialog"],
+            "extra-imports": ["tkinter", "tkinter.filedialog", "typing"],
             "allowed-io": [],
             "max-line-length": 100,
         }

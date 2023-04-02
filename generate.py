@@ -1,36 +1,36 @@
-import tkinter
-import tkinter.filedialog
-
-from graph import SpringMassGraph
+"""Generate graphs and save them to csv files, creating our datasets"""
+from graph_types import CompleteGraph, WheelGraph
+from graph_io import save_to_csv
 
 
 def main() -> None:
-    graph = SpringMassGraph()
+    """Our main function which generates and writes graphs"""
+
     # wheels
-    graph.create_wheel(3, 100)
-    graph.save_to_csv("data/w3.csv")
-    graph.create_wheel(4, 100)
-    graph.save_to_csv("data/w4.csv")
-    graph.create_wheel(5, 100)
-    graph.save_to_csv("data/w5.csv")
-    graph.create_wheel(6, 100)
-    graph.save_to_csv("data/w6.csv")
-    graph.create_wheel(8, 100)
-    graph.save_to_csv("data/w8.csv")
-    graph.create_wheel(10, 100)
-    graph.save_to_csv("data/w10.csv")
-    graph.create_wheel(20, 100)
-    graph.save_to_csv("data/w20.csv")
+    graph = WheelGraph(3, 100)
+    save_to_csv(graph, "data/w3.csv")
+    graph = WheelGraph(4, 100)
+    save_to_csv(graph, "data/w4.csv")
+    graph = WheelGraph(5, 100)
+    save_to_csv(graph, "data/w5.csv")
+    graph = WheelGraph(6, 100)
+    save_to_csv(graph, "data/w6.csv")
+    graph = WheelGraph(8, 100)
+    save_to_csv(graph, "data/w8.csv")
+    graph = WheelGraph(10, 100)
+    save_to_csv(graph, "data/w10.csv")
+    graph = WheelGraph(20, 100)
+    save_to_csv(graph, "data/w20.csv")
 
     # complete graphs
-    graph.create_complete_graph(3, 100)
-    graph.save_to_csv("data/k3.csv")
-    graph.create_complete_graph(4, 100)
-    graph.save_to_csv("data/k4.csv")
-    graph.create_complete_graph(7, 100)
-    graph.save_to_csv("data/k7.csv")
-    graph.create_complete_graph(10, 100)
-    graph.save_to_csv("data/k10.csv")
+    graph = CompleteGraph(3, 100)
+    save_to_csv(graph, "data/k3.csv")
+    graph = CompleteGraph(4, 100)
+    save_to_csv(graph, "data/k4.csv")
+    graph = CompleteGraph(7, 100)
+    save_to_csv(graph, "data/k7.csv")
+    graph = CompleteGraph(10, 100)
+    save_to_csv(graph, "data/k10.csv")
 
 
 if __name__ == "__main__":
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": ["tkinter", "tkinter.filedialog", "graph.graph"],
+            "extra-imports": ["tkinter", "tkinter.filedialog", "graph_types", "graph_io"],
             "allowed-io": [],
             "max-line-length": 100,
         }

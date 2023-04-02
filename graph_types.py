@@ -98,21 +98,24 @@ class PyramidGraph(SpringMassGraph):
         super().__init__()
 
         # Generate an equilateral triangle subdivided into equilateral triangles
-        start_x = WIDTH / 2 - ((count * vertex_dist) / 2)
+        start_x = WIDTH / 2 
 
+        y_height = math.sqrt(3) * vertex_dist / 2
         grid = []
         for i in range(count):
             row = []
             for j in range(i + 1):
-                vertex = Vertex(start_x + j * vertex_dist, i * vertex_dist)
+                vertex = Vertex(start_x + (j - i / 2) * vertex_dist, i * y_height)
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)
 
         for i in range(count):
             for j in range(i + 1):
-                if i > 0:
+                if i > 0 and j < i:
                     self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
+                if i > 0 and j > 0:
+                    self.edges.append(Edge(grid[i][j], grid[i - 1][j - 1]))
                 if j > 0:
                     self.edges.append(Edge(grid[i][j], grid[i][j - 1]))
 

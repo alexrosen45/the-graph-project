@@ -31,9 +31,9 @@ class SpringMassGraph:
 
     def __init__(
         self,
-        spring_constant: float = 0.9,
+        spring_constant: float = 0.03,
         friction: float = 0.98,
-        gravity: float = 0.1
+        gravity: float = 0.01
     ) -> None:
         self.vertices = []
         self.edges = []

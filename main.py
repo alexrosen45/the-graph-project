@@ -4,7 +4,7 @@ Main simulation file
 import pygame
 from graph import SpringMassGraph
 from graph_io import load_from_csv, save_to_csv
-from graph_types import ClothGraph
+from graph_types import PyramidGraph
 from sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
 from file_dialog import FileDialog
 
@@ -97,7 +97,7 @@ def main() -> None:
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-    graph = ClothGraph(50, 25, 10)
+    graph = PyramidGraph(5, 50)
 
     running = True
 

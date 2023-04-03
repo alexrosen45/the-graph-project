@@ -30,9 +30,10 @@ def calculate_potential_score(graph: SpringMassGraph) -> float:
 
 def run_with_config(graph: SpringMassGraph, config: list[float]) -> float:
     """Run simulation with given constants"""
-    graph.spring_constant = config[0]
-    graph.friction = config[1]
-    graph.gravity = config[2]
+    spring_constant, friction, gravity = config
+    graph.spring_constant = spring_constant
+    graph.friction = friction
+    graph.gravity = gravity
     return calculate_potential_score(graph)
 
 
@@ -43,6 +44,7 @@ def main() -> None:
     graph = PyramidGraph(6, 50)
     for _j in range(40):
         for i in range(3):
+            # Use gradient descent to optimize the three parameters
             left = max(clamps[i][0], config[i] - (clamps[i][1] - clamps[i][0]) / 20)
             right = min(clamps[i][1], config[i] + (clamps[i][1] - clamps[i][0]) / 20)
             config[i] = left

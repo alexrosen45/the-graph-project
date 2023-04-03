@@ -18,7 +18,7 @@ class WheelGraph(SpringMassGraph):
     """
     Create a wheel graph with n edges
     """
-    def __init__(self, n: int, radius: int,
+    def __init__(self, n: int, radius: float,
                  screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
@@ -49,7 +49,7 @@ class CompleteGraph(SpringMassGraph):
     """
     Create a fully connected graph with vertices in a circle
     """
-    def __init__(self, n: int, radius: int,
+    def __init__(self, n: int, radius: float,
                  screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
@@ -71,16 +71,16 @@ class ClothGraph(SpringMassGraph):
     """
     Create a cloth like graph.
     """
-    def __init__(self, x_num: int, y_num: int, vertex_dist: int, screen_width: int = 800) -> None:
+    def __init__(self, x_num: int, y_num: int, separation: float, screen_width: int = 800) -> None:
         super().__init__(gravity=0.01, friction=0.99, spring_constant=0.5)
 
-        start_x = screen_width / 2 - ((x_num * vertex_dist) / 2)
+        start_x = screen_width / 2 - ((x_num * separation) / 2)
 
         grid = []
         for i in range(0, y_num):
             row = []
             for j in range(0, x_num):
-                vertex = Vertex(start_x + j * vertex_dist, i * vertex_dist)
+                vertex = Vertex(start_x + j * separation, i * separation)
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)
@@ -103,17 +103,17 @@ class PyramidGraph(SpringMassGraph):
     """
     A graph made out of a triangular grid to make tall structures efficiently
     """
-    def __init__(self, count: int, vertex_dist: float, screen_width: int = 800) -> None:
+    def __init__(self, count: int, separation: float, screen_width: int = 800) -> None:
         super().__init__()
 
         start_x = screen_width / 2
 
-        y_height = math.sqrt(3) * vertex_dist / 2
+        y_height = math.sqrt(3) * separation / 2
         grid = []
         for i in range(count):
             row = []
             for j in range(i + 1):
-                vertex = Vertex(start_x + (j - i / 2) * vertex_dist, i * y_height)
+                vertex = Vertex(start_x + (j - i / 2) * separation, i * y_height)
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)

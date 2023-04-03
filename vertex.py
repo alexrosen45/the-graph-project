@@ -28,14 +28,18 @@ class Vertex:
         self.vy = 0
         self.pinned = False
 
-    def update(self, friction: float, gravity: float) -> None:
-        """Update self using graph friction, graph gravity."""
+    def update(self, friction: float, gravity: float, height: int, width: int) -> float:
+        """Update self using graph friction, graph gravity.
+        Returns the applied velocity."""
+        self.vx *= friction
+        self.vy *= friction
         if not self.pinned:
             self.vy += gravity
             self.x += self.vx
             self.y += self.vy
-        self.vx *= friction
-        self.vy *= friction
+            return (self.vx ** 2 + self.vy ** 2) ** 0.5 if self.y < height else abs(self.vx)
+        else:
+            return 0.0
 
     def clamp(self, height: int, width: int) -> None:
         """Clamp self using height and width."""

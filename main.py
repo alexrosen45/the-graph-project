@@ -7,6 +7,7 @@ from graph_io import load_from_csv, save_to_csv
 from graph_types import PyramidGraph
 from sliders import load_sliders, load_slider_textboxes, update_sliders, draw_slider_text
 from file_dialog import FileDialog
+from metrics import Metrics
 
 
 class GraphEventHandler:
@@ -103,6 +104,8 @@ def main(graph: SpringMassGraph) -> None:
     """
     WIDTH, HEIGHT = 800, 600
 
+    graph.update_width_and_height(WIDTH, HEIGHT)
+
     # This event handler needs to be above pygame.init, see file_dialog.py for more details
     event_handler = GraphEventHandler()
     pygame.init()
@@ -113,6 +116,8 @@ def main(graph: SpringMassGraph) -> None:
 
     # load sliders and slider textboxes
     sliders = load_sliders(screen, graph)
+
+    metrics = Metrics(screen)
 
     textboxes = load_slider_textboxes()
 
@@ -133,6 +138,8 @@ def main(graph: SpringMassGraph) -> None:
         # update slider, draw slider text, and update graph attributes
         update_sliders(graph, (sliders[0], sliders[2], sliders[4]),
                        (sliders[1], sliders[3], sliders[5]), ev)
+        metrics.update_widgets(graph, screen)
+        
         draw_slider_text(screen, textboxes[0], textboxes[1], textboxes[2])
 
         pygame.display.update()
@@ -141,7 +148,7 @@ def main(graph: SpringMassGraph) -> None:
 
 if __name__ == "__main__":
     # Also, try ClothGraph, WheelGraph, CompleteGraph, or SpringMassGraph for a blank graph
-    my_graph = PyramidGraph(8, 99)
+    my_graph = PyramidGraph(6, 50)
     main(my_graph)
 
     import doctest

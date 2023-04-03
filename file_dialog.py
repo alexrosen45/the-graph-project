@@ -33,7 +33,9 @@ class FileDialog:
     def prompt_file(self) -> str:
         """Create a Tk file dialog and cleanup when finished
         If the specified file is not in CSV format, return an empty string"""
-        file_name = tkinter.filedialog.askopenfilename(parent=self.top, filetypes=[("CSV", "*.csv")])
+        file_name = tkinter.filedialog.askopenfilename(
+            parent=self.top, filetypes=[("CSV", "*.csv")]
+        )
         self.top.withdraw()  # hide window
         return file_name
 

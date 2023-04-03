@@ -33,7 +33,7 @@ class Vertex:
         self.mass = 5
         if randomize:
             # We use the 1 - random.random() trick to ensure 0 is not a possible value
-            # This is because random.random() returns a vlue in the range [0, 1)
+            # This is because random.random() returns a value in the range [0, 1)
             self.x = x + ((1 - random.random()) * 0.02 - 0.01)
             self.y = y + ((1 - random.random()) * 0.02 - 0.01)
         else:

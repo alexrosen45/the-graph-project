@@ -1,4 +1,13 @@
-"""Generate graphs and save them to csv files, creating our datasets"""
+"""CSC 111 Final Project: Generate Datasets
+
+Module Description
+==================
+Generate graphs and save them to csv files, creating our datasets
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
+"""
 from graph_types import CompleteGraph, WheelGraph
 from graph_io import save_to_csv
 

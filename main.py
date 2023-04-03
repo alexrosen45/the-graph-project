@@ -1,5 +1,12 @@
-"""
-Main simulation file
+"""CSC 111 Final Project: Main simulation file
+
+Module Description
+==================
+This module contains the main code for running the simulation.
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import pygame
 from graph import SpringMassGraph

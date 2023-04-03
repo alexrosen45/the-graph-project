@@ -1,6 +1,13 @@
-"""
+"""CSC 111 Final Project: Spring Mass Graph
+
+Module Description
+==================
 This is the critical file for our project.
 It handles the main graph creation, updating and drawing
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import pygame
 from edge import Edge

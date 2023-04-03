@@ -1,5 +1,12 @@
-"""
+"""CSC 111 Final Project: Graph Reading and Writing to CSV
+
+Module Description
+==================
 We pulled out the graph IO methods to keep the graph file entirely about updating and drawing
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import csv
 import os.path

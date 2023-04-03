@@ -1,5 +1,12 @@
-"""
+"""CSC 111 Final Project: Edge Class
+
+Module Description
+==================
 This file holds our Edge class. It includes an initial distance and represent an edge in our graph
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import random
 from vertex import Vertex

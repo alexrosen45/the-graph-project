@@ -1,4 +1,13 @@
-"""Sliders helper functions."""
+"""CSC111 Final Project: Sliders helper functions.
+
+Module Description
+==================
+This module contains the code for rendering the sliders of the simulation.
+
+Copyright Information
+=====================
+This file is licensed under the MIT License.
+"""
 import pygame
 import pygame_widgets
 from pygame_widgets.slider import Slider

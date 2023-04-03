@@ -1,5 +1,12 @@
-"""
+"""CSC 111 Final Project: Graph Variations
+
+Module Description
+==================
 This is how we generate our various datasets, by constructing various graphs through inheritance
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import math
 from graph import SpringMassGraph

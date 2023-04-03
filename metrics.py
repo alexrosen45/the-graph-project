@@ -1,4 +1,13 @@
-"""Metrics Rendering Functions"""
+"""CSC111 Final Project: Metrics Rendering Functions
+
+Module Description
+===================
+This module contains the code for rendering the metrics of the simulation.
+
+Copyright Information
+=====================
+This file is licensed under the MIT License.
+"""
 
 import pygame
 from graph import SpringMassGraph

@@ -1,5 +1,12 @@
-"""
+"""CSC 111 Final Project: Vertex class
+
+Module Description
+==================
 This module includes our Vertex class. It supports a simple clamping and velocity
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import random
 

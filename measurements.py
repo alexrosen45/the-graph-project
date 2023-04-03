@@ -1,3 +1,14 @@
+"""CSC111 Final Project: Measurements & Results Generator
+
+Module Description
+==================
+This module contains the code for solving an optimization problem of finding the minimum
+pootential energy of a pyramid graph.
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
+"""
 from graph_types import PyramidGraph, SpringMassGraph
 
 def calculate_potential_score(graph: SpringMassGraph) -> float:
@@ -23,7 +34,7 @@ if __name__ == "__main__":
     config = [0.03, 0.98, 0.01]
     clamps = ((0.01, 0.1), (0.9, 0.99), (0.01, 0.2))
     graph = PyramidGraph(6, 50)
-    for _ in range(40):
+    for _j in range(40):
         for i in range(3):
             left = max(clamps[i][0], config[i] - (clamps[i][1] - clamps[i][0]) / 20)
             right = min(clamps[i][1], config[i] + (clamps[i][1] - clamps[i][0]) / 20)
@@ -34,7 +45,7 @@ if __name__ == "__main__":
             if left_run < right_run:
                 config[i] = left
     print(config)
-    
+
     import doctest
     doctest.testmod()
 

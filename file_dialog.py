@@ -1,6 +1,13 @@
-"""
+"""CSC 111 Final Project: File Dialog
+
+Module Description
+==================
 This file contains our FileDialog classs, used to prompt the user which
 file they want to load or save. It is accessible by pressing l or s.
+
+Copyright Information
+=====================
+This file is licensed under the MIT License
 """
 import tkinter
 import tkinter.filedialog

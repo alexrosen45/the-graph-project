@@ -20,6 +20,9 @@ class FileDialog:
     This was a painful learning process to get the file dialog to work on macOS
     in combination with pygame. In particular, this tkinter class needs
     to be initialized really early.
+
+    Instance Attributes:
+    - top: an invisible Tk window to make a dialog from
     """
     top: tkinter.Tk
 

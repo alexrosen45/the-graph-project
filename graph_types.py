@@ -18,8 +18,7 @@ class WheelGraph(SpringMassGraph):
     """
     Create a wheel graph with n edges
     """
-
-    def __init__(self, n: int, length: int,
+    def __init__(self, n: int, radius: int,
                  screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
@@ -32,8 +31,8 @@ class WheelGraph(SpringMassGraph):
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
             new_vertex = Vertex(
-                center_x + length * math.cos(theta),
-                center_y + length * math.sin(theta)
+                center_x + radius * math.cos(theta),
+                center_y + radius * math.sin(theta)
             )
             if i == 0:
                 first_vertex = new_vertex
@@ -50,8 +49,7 @@ class CompleteGraph(SpringMassGraph):
     """
     Create a fully connected graph with vertices in a circle
     """
-
-    def __init__(self, n: int, length: int,
+    def __init__(self, n: int, radius: int,
                  screen_width: int = 800, screen_height: int = 600) -> None:
         super().__init__()
 
@@ -59,8 +57,8 @@ class CompleteGraph(SpringMassGraph):
         for i in range(0, n):
             theta = (math.pi * 2) * (i / n)
             new_vertex = Vertex(
-                center_x + length * math.cos(theta),
-                center_y + length * math.sin(theta)
+                center_x + radius * math.cos(theta),
+                center_y + radius * math.sin(theta)
             )
             self.vertices.append(new_vertex)
 
@@ -73,16 +71,15 @@ class ClothGraph(SpringMassGraph):
     """
     Create a cloth like graph.
     """
-
-    def __init__(self, x_len: int, y_len: int, vertex_dist: int, screen_width: int = 800) -> None:
+    def __init__(self, x_num: int, y_num: int, vertex_dist: int, screen_width: int = 800) -> None:
         super().__init__(gravity=0.01, friction=0.99, spring_constant=0.5)
 
-        start_x = screen_width / 2 - ((x_len * vertex_dist) / 2)
+        start_x = screen_width / 2 - ((x_num * vertex_dist) / 2)
 
         grid = []
-        for i in range(0, y_len):
+        for i in range(0, y_num):
             row = []
-            for j in range(0, x_len):
+            for j in range(0, x_num):
                 vertex = Vertex(start_x + j * vertex_dist, i * vertex_dist)
                 row.append(vertex)
                 self.vertices.append(vertex)
@@ -90,12 +87,12 @@ class ClothGraph(SpringMassGraph):
 
         # pin certain nodes
         grid[0][0].pinned = True
-        grid[0][x_len - 1].pinned = True
-        grid[0][int(x_len / 3)].pinned = True
-        grid[0][int(2 * x_len / 3)].pinned = True
+        grid[0][x_num - 1].pinned = True
+        grid[0][int(x_num / 3)].pinned = True
+        grid[0][int(2 * x_num / 3)].pinned = True
 
-        for i in range(0, y_len):
-            for j in range(0, x_len):
+        for i in range(0, y_num):
+            for j in range(0, x_num):
                 if i > 0:
                     self.edges.append(Edge(grid[i][j], grid[i - 1][j]))
                 if j > 0:
@@ -104,9 +101,8 @@ class ClothGraph(SpringMassGraph):
 
 class PyramidGraph(SpringMassGraph):
     """
-    A work in progress graph to make tall structures efficiently
+    A graph made out of a triangular grid to make tall structures efficiently
     """
-
     def __init__(self, count: int, vertex_dist: float, screen_width: int = 800) -> None:
         super().__init__()
 
@@ -117,10 +113,7 @@ class PyramidGraph(SpringMassGraph):
         for i in range(count):
             row = []
             for j in range(i + 1):
-                vertex = Vertex(
-                    start_x + (j - i / 2) * vertex_dist,
-                    i * y_height
-                )
+                vertex = Vertex(start_x + (j - i / 2) * vertex_dist, i * y_height)
                 row.append(vertex)
                 self.vertices.append(vertex)
             grid.append(row)

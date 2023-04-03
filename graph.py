@@ -23,10 +23,25 @@ class Metrics:
 
 
 class SpringMassGraph:
-    """Spring mass graph."""
+    """Spring mass graph.
 
-    vertices: list
-    edges: list
+    Instance Attributes:
+    - vertices: a list of vertices that are part of this graph
+    - edges: the list of edges that connect our vertices
+    - size: the size of the screen in pixels
+    - spring_constant: $k$ in Hooke's law
+    - friction: the global friction applied to all vertices every step
+    - gravity: the amount added to the y velocity every step
+    - metrics: used for optimizing minimums to find the best spring_constant, friction, and gravity
+
+    Constants:
+    - SUBSTEPS: the number of substeps (steps per frame)
+    - EDGE_CREATION_RADIUS: on click, the distance within which we should create edges
+    - DRAG_RADIUS: the distance within which we should drag vertices
+    """
+
+    vertices: list[Vertex]
+    edges: list[Edge]
 
     size: tuple[int, int] = (800, 600)
 

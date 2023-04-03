@@ -15,11 +15,20 @@ MIN_DISTANCE = 15
 
 
 class Edge:
-    """Massless spring, applies spring forces."""
+    """
+    Massless spring, applies spring forces.
 
-    initial_distance: float = 5
+    Instance Attributes:
+    - start: one of the vertex endpoints
+    - end: the other vertex endpoint
+    - initial_distance: the initial length between start and end, used to calculate displacement
+
+    Representation Invariants:
+    - self.start != self.end
+    """
     start: Vertex
     end: Vertex
+    initial_distance: float
 
     def __init__(self, start: Vertex, end: Vertex, is_random: bool = False) -> None:
         self.start = start

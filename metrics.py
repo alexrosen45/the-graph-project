@@ -17,11 +17,12 @@ class Metrics:
     Metrics class
 
     Instance Attributes:
-    
+    font: Comic Sans, used for rendering
     """
     font: pygame.font.Font
-    potential_energy_location: tuple[int, int] = (5, 5)
-    kinetic_energy_location: tuple[int, int] = (5, 35)
+
+    POTENTIAL_ENERGY_LOCATION: tuple[int, int] = (5, 5)
+    KINETIC_ENERGY_LOCATION: tuple[int, int] = (5, 35)
 
     def __init__(self, screen: pygame.Surface) -> None:
         """Initialize metrics class"""
@@ -30,17 +31,19 @@ class Metrics:
 
     def update_widgets(self, graph: SpringMassGraph, screen: pygame.Surface) -> None:
         """Update widgets to reflect results of computation"""
-        self._render(graph.elastic_potential_energy, graph.kinetic_energy, screen)
+        self._render(graph.metrics.elastic_potential_energy, graph.metrics.kinetic_energy, screen)
 
     def _render(self, potential_energy: float, kinetic_energy: float, screen: pygame.Surface) -> None:
         """Render widgets"""
         potential_energy_text = self.font.render(
             'Elastic Potential Energy: ' + str(round(potential_energy, 2)), False, (0, 0, 0)
         )
-        screen.blit(potential_energy_text, self.potential_energy_location)
+        screen.blit(potential_energy_text, self.POTENTIAL_ENERGY_LOCATION)
 
-        kinetic_energy_text = self.font.render('Kinetic Energy: ' + str(round(kinetic_energy, 2)), False, (0, 0, 0))
-        screen.blit(kinetic_energy_text, self.kinetic_energy_location)
+        kinetic_energy_text = self.font.render(
+            'Kinetic Energy: ' + str(round(kinetic_energy, 2)), False, (0, 0, 0)
+        )
+        screen.blit(kinetic_energy_text, self.KINETIC_ENERGY_LOCATION)
 
 
 if __name__ == "__main__":

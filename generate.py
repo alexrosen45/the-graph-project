@@ -8,7 +8,7 @@ Copyright Information
 =====================
 This file is licensed under the MIT License
 """
-from graph_types import CompleteGraph, WheelGraph
+from graph_types import CompleteGraph, WheelGraph, PyramidGraph
 from graph_io import save_to_csv
 
 
@@ -40,6 +40,14 @@ def main() -> None:
     save_to_csv(graph, "data/k7.csv")
     graph = CompleteGraph(10, 100)
     save_to_csv(graph, "data/k10.csv")
+
+    # Triangle graphs
+    graph = PyramidGraph(2, 50)
+    save_to_csv(graph, "data/tri2.csv")
+    graph = PyramidGraph(4, 50)
+    save_to_csv(graph, "data/tri2.csv")
+    graph = PyramidGraph(6, 99)
+    save_to_csv(graph, "data/tri6.csv")
 
 
 if __name__ == "__main__":

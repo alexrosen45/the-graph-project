@@ -18,7 +18,29 @@ from metrics import Metrics
 
 
 class GraphEventHandler:
-    """A helper class to manage dragging of vertices"""
+    """
+    A helper class to manage dragging of vertices and general events.
+
+    Controls:
+    1. Clicking in an empty area will create a new mass, and springs will be added between this
+       masses and other masses within the green radius.
+    2. Clicking and dragging a vertex will move it (and all associated springs).
+    3. Pressing "z" removes the most recently created vertex and its associated springs.
+    4. Pressing "l" loads a stored graph from the specified file.
+    5. Pressing "s" saves the current graph to the specified file.
+    6. There are three sliders:
+        (a) The gravity slider affects the downward force applied to the vertex each tick
+        (b) The spring constant slider affects the global spring constant, which scales the
+            restoring force for each spring
+        (c) The friction slider affects the global friction constant, which scales the vertices'
+            velocity by that amount each tick
+
+    Instance Attributes:
+    - dragging: a list of vertices we are currently dragging or None if we aren't dragging
+    - lastmouse: the mouse position on the last frame, used to calculate how much we
+        should move vertices
+    - file_dialog: an instance of the FileDialog class that we use to pick file names
+    """
     dragging: list | None
     lastmouse: tuple
     file_dialog: FileDialog

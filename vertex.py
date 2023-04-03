@@ -12,8 +12,16 @@ import random
 
 
 class Vertex:
-    """Vertex class that stores a mass in a system of springs."""
+    """
+    Vertex class that stores a mass in a system of springs.
 
+    Instance Attributes:
+    - mass: the mass of the vertex (also its radius)
+    - x: the horizontal position of the vertex
+    - y: the vertical position of the vertex
+    - vx: the horizontal velocity component
+    - vy: the vertical veloocity component
+    """
     mass: float
     x: float
     y: float

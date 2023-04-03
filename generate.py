@@ -50,10 +50,12 @@ def main() -> None:
     save_to_csv(graph, "data/tri6.csv")
 
     # cloth graphs
-    graph = ClothGraph(50, 50, 10)
+    graph = ClothGraph(25, 25, 10)
     save_to_csv(graph, "data/cloth1.csv")
-    graph = ClothGraph(50, 25, 10)
+    graph = ClothGraph(25, 10, 10)
     save_to_csv(graph, "data/cloth2.csv")
+    graph = ClothGraph(50, 25, 10)
+    save_to_csv(graph, "data/cloth3.csv")
 
 
 if __name__ == "__main__":

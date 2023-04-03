@@ -11,17 +11,22 @@ This file is licensed under the MIT License
 """
 from graph_types import PyramidGraph, SpringMassGraph
 
+
 def calculate_potential_score(graph: SpringMassGraph) -> float:
+    """Calculates the total potential energy when running a graph for 10 seconds or until
+    it stops moving and the potential energy is no longer changing
+    """
     potential_score = 0.0
-    for _ in range(10 * 60 * 16):
-        old_potential_energy = graph.elastic_potential_energy
+    for _i in range(10 * 60 * 16):
+        old_potential_energy = graph.metrics.elastic_potential_energy
         graph.step()
-        if round(old_potential_energy, 5) != round(graph.elastic_potential_energy, 5) \
-            or round(graph.kinetic_energy, 5) != 0.0:
-            potential_score += graph.elastic_potential_energy / (60.0 * 16.0)
-        else:
+        if round(old_potential_energy, 5) == round(graph.metrics.elastic_potential_energy, 5) and \
+                round(graph.metrics.kinetic_energy, 5) == 0.0:
             break
+        potential_score += graph.metrics.elastic_potential_energy / (60.0 * 16.0)
+
     return round(potential_score, 4)
+
 
 def run_with_config(graph: SpringMassGraph, config: list[float]) -> float:
     """Run simulation with given constants"""
@@ -30,7 +35,9 @@ def run_with_config(graph: SpringMassGraph, config: list[float]) -> float:
     graph.gravity = config[2]
     return calculate_potential_score(graph)
 
-if __name__ == "__main__":
+
+def main() -> None:
+    """The main measurements function"""
     config = [0.03, 0.98, 0.01]
     clamps = ((0.01, 0.1), (0.9, 0.99), (0.01, 0.2))
     graph = PyramidGraph(6, 50)
@@ -46,20 +53,18 @@ if __name__ == "__main__":
                 config[i] = left
     print(config)
 
+
+if __name__ == "__main__":
+    main()
+
     import doctest
     doctest.testmod()
 
     import python_ta
     python_ta.check_all(
         config={
-            "extra-imports": [
-                "csv",
-                "edge",
-                "os.path",
-                "pygame",
-                "vertex",
-            ],
+            "extra-imports": ["graph_types"],
             "max-line-length": 120,
+            "allowed-io": ["main"]
         }
     )
-    

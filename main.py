@@ -146,7 +146,7 @@ def main(graph: SpringMassGraph) -> None:
         update_sliders(graph, (sliders[0], sliders[2], sliders[4]),
                        (sliders[1], sliders[3], sliders[5]), ev)
         metrics.update_widgets(graph, screen)
-        
+
         draw_slider_text(screen, textboxes[0], textboxes[1], textboxes[2])
 
         pygame.display.update()
@@ -165,8 +165,8 @@ if __name__ == "__main__":
     python_ta.check_all(
         config={
             "extra-imports": [
-                "pygame", "pygame_widgets", "file_dialog",
-                "graph", "graph_io", "graph_types", "sliders"
+                "pygame", "pygame_widgets", "file_dialog", "graph",
+                "graph_io", "graph_types", "sliders", "metrics"
             ],
             "allowed-io": [],
             "max-line-length": 100,

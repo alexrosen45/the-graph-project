@@ -9,9 +9,17 @@ Copyright Information
 =====================
 This file is licensed under the MIT License
 """
+from dataclasses import dataclass
 import pygame
 from edge import Edge
 from vertex import Vertex
+
+
+@dataclass
+class Metrics:
+    """Metrics for graph."""
+    elastic_potential_energy: float = 0.0
+    kinetic_energy: float = 0.0
 
 
 class SpringMassGraph:
@@ -20,15 +28,13 @@ class SpringMassGraph:
     vertices: list
     edges: list
 
-    width: int = 800
-    height: int = 600
+    size: tuple[int, int] = (800, 600)
 
     spring_constant: float
     friction: float
     gravity: float
 
-    elastic_potential_energy: float = 0.0
-    kinetic_energy: float = 0.0
+    metrics: float
 
     SUBSTEPS: int = 16
     EDGE_CREATION_RADIUS: float = 100
@@ -52,12 +58,12 @@ class SpringMassGraph:
         self.spring_constant = spring_constant
         self.friction = friction
         self.gravity = gravity
-    
+
+        self.metrics = Metrics()
 
     def update_width_and_height(self, width: int, height: int) -> None:
         """Updates graph width and height"""
-        self.width = width
-        self.height = height
+        self.size = (width, height)
 
     def draw(self, screen: pygame.Surface) -> None:
         """Draw graph on pygame screen."""
@@ -130,17 +136,17 @@ class SpringMassGraph:
 
     def step(self) -> None:
         """Execute a physics logic step for the simulation, updating all vertices and edges."""
-        self.elastic_potential_energy = 0.0
+        self.metrics.elastic_potential_energy = 0.0
         self._update_edges()
         self._update_vertices()
         self._clamp_vertices()
 
     def _update_vertices(self) -> None:
         """Update vertices for simulation step relative to change in time."""
-        self.kinetic_energy = 0.0
+        self.metrics.kinetic_energy = 0.0
         for v in self.vertices:
-            velocity = v.update(self.friction, self.gravity, self.height, self.width)
-            self.kinetic_energy += 0.5 * (velocity ** 2) * v.mass
+            velocity = v.update(self.friction, self.gravity, self.size)
+            self.metrics.kinetic_energy += 0.5 * (velocity ** 2) * v.mass
 
     def _update_edges(self) -> None:
         """Update edges for simulation step relative to change in time."""
@@ -160,14 +166,14 @@ class SpringMassGraph:
             fy = dy * dlen / distance
 
             potential_energy = self.spring_constant * ((distance - edge.initial_distance) ** 2)
-            self.elastic_potential_energy += potential_energy
+            self.metrics.elastic_potential_energy += potential_energy
 
             edge.update(fx, fy)
 
     def _clamp_vertices(self) -> None:
         """Clamp vertex coordinates."""
         for v in self.vertices:
-            v.clamp(self.height, self.width)
+            v.clamp(self.size)
 
 
 if __name__ == "__main__":

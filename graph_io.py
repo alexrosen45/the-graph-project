@@ -21,12 +21,12 @@ def load_from_csv(graph: SpringMassGraph, filename: str) -> None:
     - The first line of the file consists of two integers (n, k), where n is the number of vertices
         and k is the number of edges
     - The next n lines consist of data needed to instantiate a vertex (x, y, pinned)
-        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing 
+        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing
         whether a vertex is pinned or not
     - The next k lines consist of data needed to instantiate an edge
         which consists of three numbers (i,j,d) where i is the list index of the
         edge's start node, j is the list index of the edge's end node, and d is the
-        initial distance between nodes 
+        initial distance between nodes
 
     Do nothing if the file is empty or doesn't exist.
 
@@ -67,13 +67,13 @@ def save_to_csv(graph: SpringMassGraph, filename: str) -> None:
     - The first line of the file consists of two integers (n, k), where n is the number of vertices
         and k is the number of edges
     - The next n lines consist of data needed to instantiate a vertex (x, y, pinned)
-        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing 
+        where x is the x-coordinate, y is the y-coordinate, and pinned is a bool representing
         whether a vertex is pinned or not
     - The next k lines consist of data needed to instantiate an edge
         which consists of three numbers (i,j,d) where i is the list index of the
         edge's start node, j is the list index of the edge's end node, and d is the
-        initial distance between nodes 
-    
+        initial distance between nodes
+
     Do nothing if the file write fails.
     """
     with open(filename, "w", newline="") as csvfile:

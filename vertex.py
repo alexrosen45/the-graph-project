@@ -35,7 +35,7 @@ class Vertex:
         self.vy = 0
         self.pinned = False
 
-    def update(self, friction: float, gravity: float, height: int, width: int) -> float:
+    def update(self, friction: float, gravity: float, size: tuple[int, int]) -> float:
         """Update self using graph friction, graph gravity.
         Returns the applied velocity."""
         self.vx *= friction
@@ -44,12 +44,13 @@ class Vertex:
             self.vy += gravity
             self.x += self.vx
             self.y += self.vy
-            return (self.vx ** 2 + self.vy ** 2) ** 0.5 if self.y < height else abs(self.vx)
+            return (self.vx ** 2 + self.vy ** 2) ** 0.5 if self.y < size[1] else abs(self.vx)
         else:
             return 0.0
 
-    def clamp(self, height: int, width: int) -> None:
+    def clamp(self, size: tuple[int, int]) -> None:
         """Clamp self using height and width."""
+        width, height = size
         if not self.pinned:
             self.y = min(self.y, height)
             self.x = max(min(self.x, width), 0)
